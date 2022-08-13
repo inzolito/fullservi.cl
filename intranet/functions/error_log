@@ -1,0 +1,24 @@
+[17-May-2016 17:16:37 UTC] PHP Notice:  Undefined index: userfile in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 34
+[17-May-2016 17:16:37 UTC] PHP Notice:  Undefined index: userfile in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 35
+[17-May-2016 17:16:37 UTC] PHP Notice:  Undefined index: userfile in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 36
+[17-May-2016 17:16:37 UTC] PHP Notice:  Undefined index: userfile in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 39
+[17-May-2016 17:16:37 UTC] PHP Warning:  getimagesize() [<a href='function.getimagesize'>function.getimagesize</a>]: Filename cannot be empty in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 39
+[17-May-2016 17:16:37 UTC] PHP Notice:  Undefined index: userfile in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 42
+[18-May-2016 08:24:21 UTC] PHP Notice:  Undefined index: userfile in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 34
+[18-May-2016 08:24:21 UTC] PHP Notice:  Undefined index: userfile in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 35
+[18-May-2016 08:24:21 UTC] PHP Notice:  Undefined index: userfile in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 36
+[18-May-2016 08:24:21 UTC] PHP Notice:  Undefined index: userfile in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 39
+[18-May-2016 08:24:21 UTC] PHP Warning:  getimagesize() [<a href='function.getimagesize'>function.getimagesize</a>]: Filename cannot be empty in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 39
+[18-May-2016 08:24:21 UTC] PHP Notice:  Undefined index: userfile in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 42
+[22-May-2016 00:57:41 UTC] PHP Notice:  Undefined index: userfile in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 34
+[22-May-2016 00:57:41 UTC] PHP Notice:  Undefined index: userfile in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 35
+[22-May-2016 00:57:41 UTC] PHP Notice:  Undefined index: userfile in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 36
+[22-May-2016 00:57:41 UTC] PHP Notice:  Undefined index: userfile in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 39
+[22-May-2016 00:57:41 UTC] PHP Warning:  getimagesize() [<a href='function.getimagesize'>function.getimagesize</a>]: Filename cannot be empty in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 39
+[22-May-2016 00:57:41 UTC] PHP Notice:  Undefined index: userfile in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 42
+[26-May-2016 13:38:15 UTC] PHP Notice:  Undefined index: userfile in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 34
+[26-May-2016 13:38:15 UTC] PHP Notice:  Undefined index: userfile in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 35
+[26-May-2016 13:38:15 UTC] PHP Notice:  Undefined index: userfile in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 36
+[26-May-2016 13:38:15 UTC] PHP Notice:  Undefined index: userfile in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 39
+[26-May-2016 13:38:15 UTC] PHP Warning:  getimagesize() [<a href='function.getimagesize'>function.getimagesize</a>]: Filename cannot be empty in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 39
+[26-May-2016 13:38:15 UTC] PHP Notice:  Undefined index: userfile in /home/thefinis/public_html/colegio/functions/uploadFile.php on line 42

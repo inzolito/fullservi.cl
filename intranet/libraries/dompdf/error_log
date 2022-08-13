@@ -1,0 +1,5 @@
+[16-May-2016 03:21:03 UTC] PHP Fatal error:  Call to a member function page_text() on a non-object in /home/thefinis/public_html/colegio/libraries/dompdf/index.php on line 74
+[16-May-2016 03:30:54 UTC] PHP Fatal error:  Call to a member function page_text() on a non-object in /home/thefinis/public_html/colegio/libraries/dompdf/index.php on line 74
+[24-May-2016 17:37:29 UTC] PHP Notice:  Undefined index: nombre_pdf in /home/thefinis/public_html/colegio/libraries/dompdf/index.php on line 7
+[24-May-2016 17:37:29 UTC] PHP Notice:  Undefined index: titulo_pdf in /home/thefinis/public_html/colegio/libraries/dompdf/index.php on line 8
+[24-May-2016 17:37:29 UTC] PHP Notice:  Undefined index: html_pdf in /home/thefinis/public_html/colegio/libraries/dompdf/index.php on line 9

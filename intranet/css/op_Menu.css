@@ -1,0 +1,44 @@
+@charset "utf-8";
+/* CSS Document */
+
+#cont{
+	
+
+-webkit-border-radius: 5px;
+-moz-border-radius: 5px;
+border-radius: 5px;
+width:1000px;
+
+
+
+}
+.op_menu{
+
+width:120px; height:120Px;  margin:auto; -webkit-border-radius: 5px;
+-moz-border-radius: 5px;
+border-radius: 5px;
+text-align:center;
+
+display:inline-block;
+margin-left:80PX;
+
+-webkit-box-shadow:  3px 3px 3px rgba(50,50,50,0.28);
+-moz-box-shadow:     3px 3px 3px rgba(50,50,50,0.28);
+box-shadow:         3px 3px 3px rgba(50,50,50,0.28);
+
+font-size:16px;
+}
+
+.op_menu:hover{
+
+	background-color:#337ab7;
+	color:#FFF;
+	cursor:pointer;
+	
+
+-webkit-transition: background 100ms linear;
+-moz-transition: background 200ms linear;
+-ms-transition: background 200ms linear;
+-o-transition: background 200ms linear;
+transition: background 200ms linear;
+}

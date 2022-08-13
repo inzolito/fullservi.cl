@@ -1,0 +1,3145 @@
+<?php
+/*
+------------------------------------- Lista de funciones -----------------------------------
+
+
+-formato_fecha($normal_bd_lectura,$fecha) -> Devuelve la fecha que se envie en formato normal, database o de lectura;
+
+
+//*****
+Modificar tablas 180-02-02016
+
+tabla apoderados suplentes idapoderado2 
+tabla bloques falta nombre bloque
+tabla ano_escolar el tipo de ano sale en formato date en ves de varchar
+tabla asignatura_profesor falta id_asignatura_profesor 
+------------------------------------------
+New 
+
+
+oPCIONES SISTEMA
+-agregar ID_COMuNA
+-agregar campo para la insignia
+
+ano_escolar y poriodo_escolar
+-En vez de el id_periodo_esolar en la tabla ano_escolar, deberia ser alrr
+
+se creó la tabla ciclos y en tabla cursos se agrego el id_ciclo
+tablas horarios
+- se agrego el campo id_asignatura
+- SE AGREGO EL ID ANO ESCOLAR
+
+tabla mattriculas 
+-falta cuota centro de padres
+
+TABLA NOTAS
+- SE CAMBIO EL NOMBRE DEL CAMPO NOTAS_N POR NOTAS
+- SE AGREGO EL CAMPO HORA_NOTA <TIME>
+- SE AGREGO EL ID DE LA NUEVA TABLA PRUEBAS 
+
+ 
+SE CREO LA TABLA PRUEBAS CON
+-ID_PRUEBA
+-ID_ASIGNATURA
+-TITULO_PRUEBA
+-CONTENIDO_PRUEBA
+-FECHA_PRUEBA
+
+tabla periodos_escolares
+- Se añadio el campo nombre_periodo
+
+*/
+
+
+function conecta_bd($codificacion="utf") 
+{ 
+
+   if (!($link=mysql_connect("127.0.0.1","thefinis_colegio","colegiojarvis99"))) 
+   { 
+      echo "Error conectando a la base de datos."; 
+      exit(); 
+   } 
+   if (!mysql_select_db("thefinis_colegio",$link)) 
+   {  
+      echo "Error seleccionando la base de datos.";  
+      exit(); 
+   } 
+   
+	// Para windows
+	$loc_de = setlocale(LC_ALL, 'es_CL', 'es_ES', 'esp_esp');
+	//echo "El localismo preferido para el alemán en este sistema es '$loc_de'";
+   
+   //Para linux
+ 	//setlocale(LC_TIME, 'es_ES.UTF-8');
+	date_default_timezone_set("America/Santiago");
+
+   if($codificacion=="ISO")
+   {
+	   
+	    mysql_query("SET NAMES 'ISO-8859-1'");
+   }else{
+  
+  		mysql_query("SET NAMES 'utf8'");
+   
+   }
+   return $link; 
+   
+} 
+
+
+
+function validar_sesion()
+{
+	 session_start();
+	 if(!isset($_SESSION['rut']))
+	 {
+		 echo"<script>window.location='".index_sistema()."/pages/login/login.php';</script>";
+	 }
+	 
+}
+
+function index_sistema(){
+	
+	//return "http://colegio.thefinis.com/";	
+	 return "http://localhost/colegio/";
+}
+
+//*****************************************************************************
+function formato_fecha($normal_bd_lectura,$fecha)
+{
+	$tipo=$normal_bd_lectura;
+	if($tipo=="normal")
+	{
+		$ano=substr($fecha,0,4);
+		$mes=substr($fecha,5,2);
+		$dia=substr($fecha,8,2);
+		$fecha="$dia-$mes-$ano";
+		return($fecha);
+		
+	}
+	
+	if($tipo=="bd")
+	{
+			$ano=substr($fecha,6,4);
+			$mes=substr($fecha,3,2);
+			$dia=substr($fecha,0,2);
+			$fecha="$ano-$mes-$dia";
+			return($fecha);
+	}
+	
+	if($tipo=="lectura")
+	{
+ 
+		
+	 	return strftime("%d de %B del %G",strtotime($fecha));
+	}
+}
+ 
+function fecha_hoy()
+{
+ 	$fecha = date('d-m-Y');
+	return $fecha;
+ 
+ 
+ 
+}
+
+function fecha_mysql()
+{
+	
+	$hoy = date("Y-m-d");
+	return $hoy;
+	
+}
+
+function hora()
+{
+	$hora = date('h:i:s');
+	return $hora;
+
+}
+function hora_sin_segundo($hora)
+{
+	$hora=substr($hora,0,5);	
+	return "$hora";
+}
+function fecha_es($fecha)
+{
+
+	$ano=substr($fecha,0,4);
+	$mes=substr($fecha,5,2);
+	$dia=substr($fecha,8,2);
+
+$fecha=$dia."-".$mes."-".$ano;
+
+return $fecha;
+
+
+
+}
+
+function fecha_bd($fecha)
+{
+    $dia=substr($fecha,0,2);
+	$mes=substr($fecha,3,2);
+	$año=substr($fecha,6,4);
+	
+	 return $fecha;
+
+}
+
+function evitarinjeccion($cadena)
+{
+$cadena = strip_tags($cadena);
+$cadena = str_replace ("*", "", $cadena);
+$cadena = str_replace ("%", "", $cadena);
+$cadena = str_replace ("'", "", $cadena);
+$cadena = str_replace ("#", "", $cadena);
+$cadena = str_replace ("\\", "", $cadena);
+$cadena = str_replace("mysql","",$cadena);
+$cadena = str_replace("mssql","",$cadena);
+$cadena = str_replace("query","",$cadena);
+$cadena = str_replace("insert","",$cadena);
+$cadena = str_replace("into","",$cadena);
+$cadena = str_replace("update","",$cadena);
+$cadena = str_replace("delete","",$cadena);
+$cadena = str_replace("select","",$cadena);
+$cadena = str_replace("Character","",$cadena);
+$cadena = str_replace("MEMB_INFO","",$cadena);
+  $cadena = str_replace("IN","",$cadena);
+  $cadena = str_replace("OR","",$cadena);
+  $cadena = str_replace (";", "", $cadena);
+//$cadena = str_replace (",", "", $cadena);
+ 
+return $cadena;
+}
+
+function formato_numero($miles=0, $database=0,$dato)
+{
+	if($miles!=0)
+	{
+		$numero=number_format($dato, 0, '', '.');
+		return $numero;
+	}
+	
+	if($database!=0)
+	{
+		$numero=str_replace("$","",$dato);
+		$numero=str_replace(".",$dato);
+		
+		return $numero;
+		
+	}
+	
+}
+// FUNCIONES SELECT DEPENDIENTES
+
+
+function cargar_provincia($id_region)
+{
+ 	 
+	 $provincia_consulta=mysql_query("SELECT * FROM PROVINCIAS WHERE ID_REGION='".$id_region."' ORDER BY NOMBRE_PROVINCIA  ");
+	 $options="<option value selected>Seleccione</option>  ";
+	 while($provincia_datos=mysql_fetch_array($provincia_consulta))
+	 {
+		 $options.="<option value='".$provincia_datos['ID_PROVINCIA']."' >".$provincia_datos['NOMBRE_PROVINCIA']."</option>";
+		 
+		 
+		 
+	 }
+	 
+	 echo $options;	
+	
+	
+}
+function cargar_comuna($id_provincia) 
+{
+ 	 
+	
+	 $comuna_consulta=mysql_query("select * from COMUNAS where ID_PROVINCIA='".$id_provincia."'  order by NOMBRE_COMUNA ");
+	 $options="<option value selected>Seleccione</option>  ";
+	 while($comuna_datos=mysql_fetch_array($comuna_consulta))
+	 {
+		 $options.="<option value='".$comuna_datos['ID_COMUNA']."' >".$comuna_datos['NOMBRE_COMUNA']."</option>";
+		 
+		 
+		 
+	 }
+	 
+	 echo $options;
+	
+	
+}
+
+ 
+
+
+//-------- Funciones datos  -----
+
+function datos_alumno($rut=0, $id=0, $dato)
+{
+
+	$sql="";	
+ 
+	if($rut==0)
+		{
+		
+			$sql="SELECT * FROM ALUMNOS WHERE ID_ALUMNO='".$id."'  ";	
+			
+		}
+		if($id==0)
+		{
+			$sql="SELECT * FROM ALUMNOS  WHERE RUT_ALUMNO='".$rut."'  ";	
+			
+		}
+	
+	
+	 
+	if($dato=="existe")
+	{
+		$alumno_consulta=mysql_query($sql);
+
+		if(mysql_num_rows($alumno_consulta)==1)
+		{
+				
+			return 1;
+			
+		}else{
+			
+			return 0;	
+		}
+			
+		
+			
+	}else{
+		
+		 
+		
+		$alumno_consulta=mysql_query($sql);
+	
+	
+		
+		// preguntar mas campos
+					
+		if(mysql_num_rows($alumno_consulta)==1)
+		{
+				$datos_array=explode(",",$dato);		
+				$alumno_datos=mysql_fetch_array($alumno_consulta);	
+				
+				if($dato=="*")
+				{
+					return $alumno_datos;
+						
+				}else{
+					if(count($datos_array)==1)
+					{
+						return $alumno_datos[$dato];					
+					}else{
+						$alumno_return=$alumno_datos[$datos_array[0]];		
+	
+						for($x=1; $x<count($datos_array); $x++)
+						{
+	
+							$alumno_return.="-separate-";	
+							$alumno_return.=$alumno_datos[$datos_array[$x]];
+						
+							 
+							 
+									
+						}//end for
+						
+						return $alumno_return;
+					}// END IF	
+				}
+				
+				
+ 
+		}else{
+			
+			return 0;	
+		}
+		
+		
+		
+		
+	}
+}
+
+function datos_padre($rut=0, $id=0, $dato)
+{
+	
+	
+
+	$sql="";	
+ 
+	if($id!= 0)
+		{
+			
+			$sql="SELECT * FROM PADRES WHERE ID_PADRE='".$id."'  ";	
+			
+		}
+		if($rut!= 0)
+		{
+			$sql="SELECT * FROM PADRES WHERE RUT_PADRE='".$rut."'  ";	
+			
+		}
+		
+	 
+	if($dato=="existe")
+	{
+		
+	
+		$padre_consulta=mysql_query($sql);
+
+		if(mysql_num_rows($padre_consulta)==1)
+		{
+				
+			return 1;
+			
+		}else{
+			
+			return 0;	
+		}
+			
+		
+			
+	}else{
+		
+		
+		$padre_consulta=mysql_query($sql);
+	
+ 		
+		// preguntar mas campos
+					
+		if(mysql_num_rows($padre_consulta)==1)
+		{
+				$datos_array=explode(",",$dato);		
+				$padre_datos=mysql_fetch_array($padre_consulta);	
+				
+				if($dato=="*")
+				{
+					return $padre_datos;
+				}else{
+					
+					if(count($datos_array)==1)
+					{
+				 	 
+						return $padre_datos[$dato];					
+					}else{
+						$padre_return=$padre_datos[$datos_array[0]];		
+	
+						for($x=1; $x<count($datos_array); $x++)
+						{
+	
+							$padre_return.="-separate-";	
+							$padre_return.=$padre_datos[$datos_array[$x]];
+						
+							 
+							 
+									
+						}//end for
+						
+						return $padre_return;
+					}
+				}
+				
+				
+				
+		}else{
+			
+			return 0;	
+		}
+		
+		
+		
+		
+	}
+}
+
+function datos_madre($rut=0, $id=0, $dato)
+{
+	
+	
+
+	$sql="";	
+	   
+	    if($id !=0)
+		{
+		
+			$sql="SELECT * FROM MADRES  WHERE ID_MADRE='".$id."'  ";	
+			
+		}
+		if($rut!=0)
+		{
+			$sql="SELECT * FROM MADRES  WHERE  RUT_MADRE='".$rut."'  ";	
+			
+		}
+	
+	if($dato=="existe")
+	{
+		
+	
+		$madre_consulta=mysql_query($sql);
+
+		if(mysql_num_rows($madre_consulta)==1)
+		{
+				
+			return 1;
+			
+		}else{
+			
+			return 0;	
+		}
+			
+		
+			
+	}else{
+		
+		
+		
+		$madre_consulta=mysql_query($sql);
+	
+ 		
+		// preguntar mas campos
+					
+		if(mysql_num_rows($madre_consulta)==1)
+		{
+				$datos_array=explode(",",$dato);		
+				$madre_datos=mysql_fetch_array($madre_consulta);	
+				
+				if($dato=="*")
+				{
+					return $madre_datos;
+				}else{
+				
+					if(count($datos_array)==1)
+					{
+					 
+						return $madre_datos[$dato];					
+					}else{
+						$madre_return=$madre_datos[$datos_array[0]];		
+	
+						for($x=1; $x<count($datos_array); $x++)
+						{
+	
+							$madre_return.="-separate-";	
+							$madre_return.=$madre_datos[$datos_array[$x]];
+						
+							 
+							 
+									
+						}//end for
+						
+						return $madre_return;
+					}
+				}
+		}else{
+			
+			return 0;	
+		}
+		
+		
+		
+		
+	}
+}
+
+ function datos_funcionario($rut,$dato_quees)
+{
+ 
+ $sql="";
+ $es_profe=0;
+ $es_asistente=0;
+ 
+ 
+ $es_profe_consulta=mysql_query('select * from profesores where rut_profesor="'.$rut.'"');
+ $es_asistente_consulta=mysql_query('select * from asistentes where rut_asistente="'.$rut.'"');
+ 
+ if(mysql_num_rows($es_profe_consulta)==1)
+ {
+  $es_profe=1;
+  $funcionario_datos=mysql_fetch_array($es_profe_consulta); 
+ }
+ 
+ if(mysql_num_rows($es_asistente_consulta)==1)
+ {
+  $es_asistente=1; 
+  $funcionario_datos=mysql_fetch_array($es_asistente_consulta); 
+ }
+ 
+ 
+ if($dato_quees=="quees")
+ {
+  if($es_profe==1)
+  {
+   
+   return "-es profe-"; 
+   
+  }else if($es_asistente==1)
+  {
+    return "-es asistente-"; 
+
+   
+  }else{
+     return "-no existe-"; 
+
+   
+  }
+  
+ }else{
+  
+    return $funcionario_datos[$dato_quees];
+
+ }
+ 
+   
+ 
+}
+
+ 
+
+function datos_profesor($id=0, $rut=0, $dato)
+{
+ 
+ 
+	$sql="";
+ if($rut!=0)
+		{
+			 $sql='SELECT * FROM PROFESORES WHERE RUT_PROFESOR="'.$rut.'"';	
+			
+		}
+		if($id!=0)
+		{
+			  $sql='SELECT * FROM PROFESORES WHERE ID_PROFESOR="'.$id.'"';
+			
+		}
+	
+	if($dato=="existe")
+	{
+			 	
+		
+		$profesor_consulta=mysql_query($sql);	
+			
+		if(mysql_num_rows($profesor_consulta)==1)
+		{
+				
+			return 1;
+			
+		}else{
+			
+			return 0;	
+		}
+			
+	}else{
+ 
+	$profesor_consulta=mysql_query($sql);		
+		
+		if(mysql_num_rows($profesor_consulta)==1)
+		{
+ 
+				$datos_array=explode(",",$dato);		
+				$profesor_datos=mysql_fetch_array($profesor_consulta);	
+				//return  $dato;
+				
+				if($dato=="*")
+				{
+					return $profesor_datos;
+				}else{
+					
+					if(count($datos_array)==1)
+					{
+	 
+						return $profesor_datos[$dato];					
+					}else{
+						
+											
+						$profesor_return=$profesor_datos[$datos_array[0]];		
+						
+						
+						for($x=1; $x<count($datos_array); $x++)
+						{
+	
+							$profesor_return.="-separate-";	
+							$profesor_return.=$profesor_datos[$datos_array[$x]];
+						
+							 
+							 
+									
+						}//end for
+						
+						return $profesor_return;
+					}
+			}
+		}else{
+			
+			return 0;	
+		}
+		
+		
+		
+		
+	}
+ 
+   
+}
+
+function datos_asistente($id=0, $rut=0, $dato)
+{
+	
+	
+
+	$sql="";	
+	if($rut!=0)
+	{
+		$sql='SELECT * FROM ASISTENTES WHERE RUT_ASISTENTE="'.$rut.'"';	
+		
+	}
+	if($id!=0)
+	{
+		$sql='SELECT * FROM ASISTENTES WHERE ID_ASISTENTE="'.$id.'"';
+		
+	}
+	
+	$asistente_consulta=mysql_query($sql);
+	if($dato=="existe")
+	{
+			
+			
+		if(mysql_num_rows($asistente_consulta)==1)
+		{
+				
+			return 1;
+			
+		}else{
+			
+			return 0;	
+		}
+			
+	}else{ 
+		
+		
+					
+		if(mysql_num_rows($asistente_consulta)==1)
+		{
+				$datos_array=explode(",",$dato);		
+				$asistente_datos=mysql_fetch_array($asistente_consulta);	
+				//return  $dato;
+				if($dato=="*")
+				{
+					return $asistente_datos;
+				}else{
+									
+					if(count($datos_array)==1)
+					{
+						return $asistente_datos[$dato];					
+					}else{
+						$asistente_return=$asistente_datos[$datos_array[0]];		
+	
+						for($x=1; $x<count($datos_array); $x++)
+						{
+	
+							$asistente_return.="-separate-";	
+							$asistente_return.=$asistente_datos[$datos_array[$x]];
+						
+							 
+							 
+									
+						}//end for
+						
+						return $asistente_return;
+					}
+				}
+		}else{
+			
+			return 0;	
+		}
+		
+		
+		
+		
+	}
+	
+ 
+   
+}
+
+function datos_usuario($id_usuario=0,$id_profesor=0,$id_asistente, $dato)
+{
+	
+ 	$array_datos=explode(",",$dato);
+	
+	
+	
+	$sql="";	
+	
+	if($id_usuario!=0)
+	{	
+		$sql='SELECT * FROM USUARIOS JOIN PERMISOS USING(ID_PERMISO)  WHERE ID_USUARIO="'.$id.'"';
+	}
+	if($id_profesor!=0)
+	{	
+		$sql='SELECT * FROM USUARIOS JOIN PERMISOS USING(ID_PERMISO)  WHERE ID_PROFESOR="'.$id_profesor.'"';
+	}
+	if($id_asistente!=0)
+	{	
+		$sql='SELECT * FROM USUARIOS JOIN PERMISOS USING(ID_PERMISO)  WHERE ID_ASISTENTE="'.$id_asistente.'"';
+	}  
+	
+	
+	$usuario_consulta=mysql_query($sql);
+	
+		if($dato_devolver=="existe")
+	{
+			
+			
+		if(mysql_num_rows($usuario_consulta)==1)
+		{
+				
+			return 1;
+			
+		}else{
+			
+			return 0;	
+		}
+			
+	}else{
+		
+		
+					
+		if(mysql_num_rows($usuario_consulta)==1)
+		{
+				$datos_array=explode(",",$dato);		
+				$usuario_datos=mysql_fetch_array($usuario_consulta);	
+				//return  $dato;
+				if($dato=="*")
+				{
+					return  $usuario_datos ;
+				}else{
+					
+					if(count($datos_array)==1)
+					{
+						return $usuario_datos[$dato];					
+					}else{
+						$usuario_return=$usuario_datos[$datos_array[0]];	
+	
+						for($x=1; $x<count($datos_array); $x++)
+						{
+	
+							$usuario_return.="-separate-";	
+							$usuario_return.=$usuario_datos[$datos_array[$x]];
+						
+							 
+							 
+									
+						}//end for
+						
+						return $usuario_return;
+					}
+				}
+		}else{
+			
+			return 0;	
+		}
+		
+		
+		
+		
+	}
+	
+ 
+ 
+   
+}
+
+ function datos_apoderado($id_apoderado=0, $id_padre=0,$id_madre=0, $rut_apoderado=0, $dato)
+{
+ 
+ 
+	$sql="";
+ 
+ 			
+		if($id_apoderado!=0)
+		{
+			 $sql='SELECT * FROM APODERADOS WHERE ID_APODERADO="'.$id_apoderado.'"';	
+			
+		}
+		if($id_padre!=0)
+		{
+			  $sql='SELECT * FROM APODERADOS WHERE ID_PADRE="'.$id_padre.'"';
+			
+		}
+		if($id_madre!=0)
+		{
+			  $sql='SELECT * FROM APODERADOS WHERE ID_MADRE="'.$id_madre.'"';
+			
+		}
+		if($rut_apoderado!=0)
+		{
+			  $sql='SELECT * FROM APODERADOS WHERE RUT_APODERADO="'.$rut_apoderado.'"';
+			
+		}
+	
+ 
+	if($dato=="existe")
+	{
+		 
+		$apoderado_consulta=mysql_query($sql);	
+			
+		if(mysql_num_rows($apoderado_consulta)==1)
+		{
+				
+			return 1;
+			
+		}else{
+			
+			return 0;	
+		}
+			
+	}else{
+		
+	 	
+	$apoderado_consulta=mysql_query($sql);		
+		
+		if(mysql_num_rows($apoderado_consulta)==1)
+		{
+ 
+				$datos_array=explode(",",$dato);		
+				$apoderado_datos=mysql_fetch_array($apoderado_consulta);	
+				//return  $dato;
+				
+				if($dato=="*")
+				{
+					return $apoderado_datos;
+				}else{
+					
+					if(count($datos_array)==1)
+					{
+	 
+						return $apoderado_datos[$dato];					
+					}else{
+						
+											
+						$apoderado_return=$apoderado_datos[$datos_array[0]];
+						
+						
+						for($x=1; $x<count($datos_array); $x++)
+						{
+	
+							$apoderado_return.="-separate-";	
+							$apoderado_return.=$apoderado_datos[$datos_array[$x]];
+						
+							 
+							 
+									
+						}//end for
+						
+						return $apoderado_return;
+					}
+				}
+		}else{
+			
+			return 0;	
+		}
+		
+		
+		
+		
+	}
+ 
+   
+}
+
+ function datos_apoderado_suplente($id_apoderado_suplente=0, $id_padre=0,$id_madre=0, $rut_apoderado_suplente=0, $dato)
+{
+ if($id_apoderado_suplente*0!=0)$id_apoderado_suplente=-1 ;
+ if($id_padre*0!=0)$id_padre=-1 ;
+ if($id_madre*0!=0)$id_madre=-1 ;
+ 
+	$sql="";
+ 
+ 			
+		if($id_apoderado_suplente!=0)
+		{
+			 $sql='SELECT * FROM APODERADOS_SUPLENTES WHERE ID_APODERADOS="'.$id_apoderado_suplente.'"';	
+			
+		}
+		if($id_padre!=0)
+		{
+			  $sql='SELECT * FROM APODERADOS_SUPLENTES WHERE ID_PADRE="'.$id_padre.'"';
+			
+		}
+		if($id_madre!=0)
+		{
+			  $sql='SELECT * FROM APODERADOS_SUPLENTES WHERE ID_MADRE="'.$id_madre.'"';
+			
+		}
+		if($rut_apoderado_suplente!=0)
+		{
+			  $sql='SELECT * FROM APODREADOS_SUPLENTES WHERE RUT_APODERADOS="'.$rut_apoderado_suplente.'"';
+			
+		}
+ 	if($dato=="existe")
+	{
+		 
+		$apoderado_suplente_consulta=mysql_query($sql);	
+			
+		if(mysql_num_rows($apoderado_suplente_consulta)==1)
+		{
+				
+			return 1;
+			
+		}else{
+			
+			return 0;	
+		}
+			
+	}else{
+		
+	 	
+	$apoderado_suplente_consulta=mysql_query($sql);		
+		
+		if(mysql_num_rows($apoderado_suplente_consulta)==1)
+		{
+ 
+				$datos_array=explode(",",$dato);		
+				$apoderado_suplente_datos=mysql_fetch_array($apoderado_suplente_consulta);	
+				//return  $dato;
+				
+				if($dato=="*")
+				{
+					return $apoderado_suplente_datos;
+				}else{
+					
+					if(count($datos_array)==1)
+					{
+	 
+						return $apoderado_suplente_datos[$dato];					
+					}else{
+						
+											
+						$apoderado_suplente_return=$apoderado_suplente_datos[$datos_array[0]];	
+						
+						
+						for($x=1; $x<count($datos_array); $x++)
+						{
+	
+							$apoderado_suplente_return.="-separate-";	
+							$apoderado_suplente_return.=$apoderado_suplente_datos[$datos_array[$x]];
+						
+							 
+							 
+									
+						}//end for
+						
+						return $apoderado_suplente_return;
+					}
+				}
+		}else{
+			
+			return 0;	
+		}
+		
+		
+		
+		
+	}
+ 
+   
+}
+
+function datos_comuna($id=0, $nombre=0, $dato)
+{
+
+	$sql="";	
+	if($nombre!=0)
+	{
+		$sql='SELECT * FROM COMUNAS WHERE NOMBRE_COMUNA="'.$nombre.'"';	
+		
+	}
+	if($id!=0)
+	{
+		$sql='SELECT * FROM COMUNAS WHERE  ID_COMUNA="'.$id.'"';
+		
+	}
+  
+	$comuna_consulta=mysql_query($sql);
+	if($dato=="existe")
+	{
+			
+			
+		if(mysql_num_rows($comuna_consulta)==1)
+		{
+				
+			return 1;
+			
+		}else{
+			
+			return 0;	
+		}
+			
+	}else{ 
+		
+		
+					
+		if(mysql_num_rows($comuna_consulta)==1)
+		{
+				$datos_array=explode(",",$dato);		
+				$comuna_datos=mysql_fetch_array($comuna_consulta);	
+				//return  $dato;
+				if($dato=="*")
+				{
+					return $comuna_datos   ;
+				}else{
+					if(count($datos_array)==1)
+					{
+						return $comuna_datos[$dato];					
+					}else{
+						$comuna_return=$comuna_datos[0];		
+	
+						for($x=1; $x<count($datos_array); $x++)
+						{
+	
+							$comuna_return.="-separate-";	
+							$comuna_return.=$comuna_datos[$datos_array[$x]];
+						
+							 
+							 
+									
+						}//end for
+						
+						return $comuna_return;
+					}
+				}
+ 
+		}else{
+			
+			return 0;	
+		}
+		
+		
+		
+		
+	}
+	
+ 
+   
+}
+
+function ano_escolar_actual($campo="ID_ANO_ESCOLAR")
+{
+	
+	$consulta=mysql_query("SELECT * FROM ANO_ESCOLAR WHERE ESTADO_ANO='abierto'");
+	if(mysql_num_rows($consulta)==1)
+	{
+		$datos=mysql_fetch_array($consulta);	
+		 
+		return $datos[$campo];	
+
+		
+	}else{
+		
+		return 0;	
+	}
+}
+
+ function datos_matricula($id_matricula=0, $id_alumno=0, $id_curso=0,$dato, $id_ano_escolar=0 )
+{
+ 
+ 
+	$sql="";
+ 	if($id_ano_escolar==0)
+	{
+		$id_ano_escolar=ano_escolar_actual();	
+	}
+ 			
+		if($id_matricula!=0)
+		{
+			 $sql='SELECT * FROM MATRICULAS WHERE ID_MATRICULA="'.$id_matricula.'"  AND ID_ANO_ESCOLAR="'.$id_ano_escolar.'" ';	
+			
+		}
+		if($id_alumno!=0)
+		{
+			  $sql='SELECT * FROM MATRICULAS WHERE ID_ALUMNO="'.$id_alumno.'"  AND ID_ANO_ESCOLAR="'.$id_ano_escolar.'"  ';
+			
+		}
+		if($id_curso!=0)
+		{
+			  $sql='SELECT * FROM MATRICULAS WHERE ID_CURSO="'.$id_curso.'"  AND ID_ANO_ESCOLAR="'.$id_ano_escolar.'"  ';
+			
+		}
+		
+ 	
+	if($dato=="existe")
+	{
+		 
+		$matricula_consulta=mysql_query($sql);	
+			
+		return mysql_num_rows($matricula_consulta);
+			
+	}else{
+		
+	 	
+	$matricula_consulta=mysql_query($sql);		
+		
+		if(mysql_num_rows($matricula_consulta)==1)
+		{
+ 
+				$datos_array=explode(",",$dato);		
+				$matricula_datos=mysql_fetch_array($matricula_consulta);	
+				//return  $dato;
+				
+				if($dato=="*")
+				{
+					return $matricula_datos;
+				}else{
+					
+					if(count($datos_array)==1)
+					{
+	 
+						return $matricula_datos[$dato];					
+					}else{
+						
+											
+						$matricula_return=$matricula_datos[$datos_array[0]];
+						
+						
+						for($x=1; $x<count($datos_array); $x++)
+						{
+	
+							$matricula_return.="-separate-";	
+							$matricula_return.=$matricula_datos[$datos_array[$x]];
+						
+							 
+							 
+									
+						}//end for
+						
+						return $matricula_return;
+					}
+				}
+		}else{
+			
+			return 0;	
+		}
+		
+		
+		
+		
+	}
+ 
+   
+}
+
+function datos_global($valor_condicion,$nombre_campo,$nombre_tabla,$datos_retornar)
+{
+	$dato=$datos_retornar;	
+	$sql=" SELECT * FROM ".$nombre_tabla." WHERE ".$nombre_campo." = '".$valor_condicion."'";	
+ 
+	 
+ 	if(strtoupper($dato)=="EXISTE")
+	{
+		$datos_global_consulta=mysql_query($sql);
+
+		if(mysql_num_rows($datos_global_consulta)==1)
+		{
+				
+			return 1;
+			
+		}else{
+			
+			return 0;	
+		}
+			
+		
+			
+	}else{
+		
+		 
+		$datos_global_consulta=mysql_query($sql);
+	
+	
+		
+		// preguntar mas campos
+					
+		if(mysql_num_rows($datos_global_consulta)==1)
+		{
+				$datos_array=explode(",",$dato);		
+				$datos_global_datos=mysql_fetch_array($datos_global_consulta);	
+				
+				if($dato=="*")
+				{
+					return $datos_global_datos;
+						
+				}else{
+					if(count($datos_array)==1)
+					{
+						return $datos_global_datos[$dato];					
+					}else{
+						$datos_global_return=$datos_global_datos[$datos_array[0]];	
+	
+						for($x=1; $x<count($datos_array); $x++)
+						{
+	
+							$datos_global_return.="-separate-";	
+							$datos_global_return.=$datos_global_datos[$datos_array[$x]];
+						
+							 
+							 
+									
+						}//end for
+						
+						return $datos_global_return;
+					}// END IF	
+				}
+				
+				
+ 
+		}else{
+			
+			return 0;	
+		}
+		
+		
+		
+		
+	}	
+	
+	
+}
+
+function periodo_escolar_actual($campo="ID_PERIODO")
+{
+	$fecha= formato_fecha("bd",fecha_hoy());
+	$consulta=mysql_query('SELECT * FROM PERIODOS_ESCOLARES WHERE  ID_ANO_ESCOLAR="'.ano_escolar_actual().'" AND "'.$fecha.'" BETWEEN INICIO_PERIODO AND TERMINO_PERIODO  ORDER BY INICIO_PERIODO ');
+ 	if(mysql_num_rows($consulta)==1)
+	{
+		$datos=mysql_fetch_array($consulta);	
+		 
+		return $datos[$campo];	
+
+		
+	}else{
+		
+		return 0;	
+	}
+}
+
+
+function datos_periodo_escolar($id_periodo_escolar=0, $fecha=0, $dato,$id_ano=0)
+{
+ 
+ 	if($id_ano==0)
+	{
+		$id_ano=ano_escolar_actual();	
+	}
+ 
+	$sql="";
+ 		if($id_periodo_escolar!=0)
+		{
+			 $sql='SELECT * FROM PERIODOS_ESCOLARES WHERE  ID_PERIODO_ESCOLAR="'.$id_periodo_escolar.'" AND ID_ANO_ESCOLAR="'.$id_ano.'" ORDER BY INICIO_PERIODO ';	
+			
+		}
+		
+		if($fecha!=0)
+		{
+			  $sql='SELECT * FROM PERIODOS_ESCOLARES WHERE  ID_ANO_ESCOLAR="'.$id_ano.'" AND "'.$fecha.'" BETWEEN INICIO_PERIODO AND TERMINO_PERIODO  ORDER BY INICIO_PERIODO ';
+			
+		}
+	
+
+	 
+	
+	if(strtoupper($dato)=="EXISTE")
+	{
+			 	
+		
+		$periodo_escolar_consulta=mysql_query($sql);	
+			
+		if(mysql_num_rows($periodo_escolar_consulta)==1)
+		{
+				
+			return 1;
+			
+		}else{
+			
+			return 0;	
+		}
+			
+	}else{
+ 
+	$periodo_escolar_consulta=mysql_query($sql);		
+		
+		if(mysql_num_rows($periodo_escolar_consulta)==1)
+		{
+ 
+				$datos_array=explode(",",$dato);		
+				$periodo_escolar_datos=mysql_fetch_array($periodo_escolar_consulta);	
+				//return  $dato;
+				
+				if($dato=="*")
+				{
+					return $periodo_escolar_datos;
+				}else{
+					
+					if(count($datos_array)==1)
+					{
+	 
+						return $periodo_escolar_datos[$dato];					
+					}else{
+						
+											
+						$periodo_escolar_return=$periodo_escolar_datos[$datos_array[0]];		
+						
+						
+						for($x=1; $x<count($datos_array); $x++)
+						{
+	
+							$periodo_escolar_return.="-separate-";	
+							$periodo_escolar_return.=$periodo_escolar_datos[$datos_array[$x]];
+						
+							 
+							 
+									
+						}//end for
+						
+						return $periodo_escolar_return;
+					}
+			}
+		}else{
+			
+			return 0;	
+		}
+		
+		
+		
+		
+	}
+ 
+   
+}
+
+function datos_informe_desarrollo($id_alumno,$dato)
+{
+   $id_ano=ano_escolar_actual();
+  $id_periodo=periodo_escolar_actual();
+ 
+ $sql="";
+    if($id_alumno!=0 && $id_periodo)
+  {
+    $sql="SELECT * FROM INFORMES_DESARROLLO WHERE ID_PERIODO='".$id_periodo."' and ID_ALUMNO='".$id_alumno."' AND ID_ANO_ESCOLAR='".$id_ano."'"; 
+   
+  }else{
+  
+    return 0; 
+  }
+  
+ 
+ if($dato=="existe")
+ {
+     
+  
+  $informe_consulta=mysql_query($sql); 
+   
+  if(mysql_num_rows($informe_consulta)==1)
+  {
+    
+   return 1;
+   
+  }else{
+   
+   return 0; 
+  }
+   
+ }else{
+ 
+ $informe_consulta=mysql_query($sql);  
+  
+  if(mysql_num_rows($informe_consulta)==1)
+  {
+ 
+    $datos_array=explode(",",$dato);  
+    $informe_datos=mysql_fetch_array($informe_consulta); 
+    //return  $dato;
+    
+    if($dato=="*")
+    {
+     return $informe_datos;
+    }else{
+     
+     if(count($datos_array)==1)
+     {
+  
+      return $informe_datos[$dato];     
+     }else{
+      
+           
+      $informe_return=$informe_datos[$datos_array[0]];  
+      
+      
+      for($x=1; $x<count($datos_array); $x++)
+      {
+ 
+       $informe_return.="-separate-"; 
+       $informe_return.=$informe_datos[$datos_array[$x]];
+      
+        
+        
+         
+      }//end for
+      
+      return $informe_return;
+     }
+   }
+  }else{
+   
+   return 0; 
+  }
+  
+  
+  
+  
+ }
+ 
+   
+}
+ 
+
+// ------------------- datos enlazados ------------------------ //
+function datos_curso_repetido_alumno($id_alumno,$lista_o_separate)
+{
+	$cursos_repetidos_consulta=mysql_query("SELECT * FROM  ANTECEDENTES_ESCOLARES_ALUMNO AS AEA JOIN ANTECEDENTES_ESCOLARES USING(ID_ANTECEDENTE) WHERE ID_ALUMNO='".$id_alumno."' ");	
+	if(mysql_num_rows($cursos_repetidos_consulta)>0)
+	{
+		if($lista_o_separate=="lista")
+		{
+			$lista="<ul>";
+			while($cursos_repetidos_datos=mysql_fetch_array($cursos_repetidos_consulta))
+			{
+				
+				$lista.="<li>".$cursos_repetidos_datos['NOMBRE_ANTECEDENTE']."</li>";		
+							
+					
+			}
+			$lista.="</ul>";
+			
+			return $lista;
+		}
+		else{
+			if($lista_o_separate=="separate")
+			{
+			
+				while($cursos_repetidos_datos=mysql_fetch_array($cursos_repetidos_consulta))
+				{
+					
+						
+					
+				}
+			
+			}else{
+				return 0;	
+				
+			}
+		}
+		
+		
+		
+		
+	}else{
+		
+		return "El alumno no ha repetido ningun curso.";	
+	}
+
+
+}
+
+function datos_enfermedades_alumno($id_alumno,$lista_o_separate)
+{
+	$enfermedades_consulta=mysql_query("SELECT * FROM ENFERMEDADES AS E JOIN ALUMNO_ENFERMEDADES USING(ID_ENFERMEDAD) WHERE ID_ALUMNO='".$id_alumno."' ");	
+	if(mysql_num_rows($enfermedades_consulta)>0)
+	{
+		if(strtoupper($lista_o_separate)=="LISTA")
+		{
+			$lista="<ul>";
+			while($enfermedades_datos=mysql_fetch_array($enfermedades_consulta))
+			{
+				
+				$lista.="<li>".$enfermedades_datos['NOMBRE_ENFERMEDAD']."</li>";		
+							
+					
+			}
+			$lista.="</ul>";
+			
+			return $lista;
+		}
+		else{
+			if($lista_o_separate=="separate")
+			{
+			
+				while($enfermedades_datos=mysql_fetch_array($enfermedades_consulta))
+				{
+					
+						
+					
+				}
+			
+			}else{
+				return 0;	
+				
+			}
+		}
+		
+		
+		
+		
+	}else{
+		
+		return "No se ingresaron enfermedades.";	
+	}
+
+
+}
+
+function datos_medicamentos_alumno($id_alumno,$lista_o_separate)
+{
+	$medicamentos_consulta=mysql_query("select * from MEDICAMENTOS as e join ALUMNO_MEDICAMENTOS using(ID_MEDICAMENTO) where ID_ALUMNO='".$id_alumno."' ");	
+	if(mysql_num_rows($medicamentos_consulta)>0)
+	{
+		if(strtoupper($lista_o_separate)=="LISTA")
+		{
+			$lista="<ul>";
+			while($medicamentos_datos=mysql_fetch_array($medicamentos_consulta))
+			{
+				
+				$lista.="<li>".$medicamentos_datos['NOMBRE_MEDICAMENTO']."</li>";		
+							
+					
+			}
+			$lista.="</ul>";
+			
+			return $lista;
+		}
+		else{
+			if($lista_o_separate=="separate")
+			{
+			
+				while($medicamentos_datos=mysql_fetch_array($medicamentos_consulta))
+				{
+					
+						
+					
+				}
+			
+			}else{
+				return 0;	
+				
+			}
+		}
+		
+		
+		
+		
+	}else{
+		
+		return "No se ingresaron medicamentos.";	
+	}
+
+
+}
+
+function datos_profesor_asignatura($id_profesor,$lista_o_separate,$id_ano_escolar=0)
+{
+	if($id_ano_escolar==0)
+	{
+		
+		$id_ano_escolar=ano_escolar_actual(); 
+	
+	}
+	
+	$profesor_asignatura_consulta=mysql_query("SELECT * FROM ASIGNATURA_PROFESOR JOIN ASIGNATURAS USING(ID_ASIGNATURA) WHERE ID_PROFESOR='".$id_profesor."'AND ID_ANO_ESCOLAR=".$id_ano_escolar." ");
+ 	if(mysql_num_rows($profesor_asignatura_consulta)>0)
+	{
+		if(strtoupper($lista_o_separate)=="LISTA")
+		{
+			$lista="<ul>";
+			while($profesor_asignatura_datos=mysql_fetch_array($profesor_asignatura_consulta))
+			{
+				
+				$lista.="<li>".$profesor_asignatura_datos['NOMBRE_ASIGNATURA']."</li>";		
+							
+					
+			}
+			$lista.="</ul>";
+			
+			return $lista;
+		}
+		else{
+			if(strtoupper($lista_o_separate)=="SEPARATE")
+			{
+			
+			$lista="";
+			$sw=0;
+				while($profesor_asignatura_datos=mysql_fetch_array($profesor_asignatura_consulta))
+				{
+					if($sw==0)
+					{
+						$lista.=$profesor_asignatura_datos["ID_ASIGNATURA"];
+						$sw=1;
+	
+					}else{
+						
+						$lista.="-separate-".$profesor_asignatura_datos["ID_ASIGNATURA"];	
+					}
+ 
+				}
+			return $lista;
+			}else{
+				return 0;		
+			}
+			
+			return 0;
+		}
+
+	}else{
+		
+		return 0;	
+	}
+
+
+	
+}
+
+function datos_horario_curso($id_curso,$dato, $id_ano_escolar=0){
+	
+	 
+	$sql="";
+ 	if($id_ano_escolar==0)
+	{
+		$id_ano_escolar=ano_escolar_actual();	
+	}
+ 			
+		if($id_curso!=0)
+		{
+			 $sql="SELECT * FROM HORARIOS WHERE ID_CURSO='".$id_curso."' AND ID_ANO_ESCOLAR='".$id_ano_escolar."'";	
+			
+		}
+		 
+	
+	
+	if(strtoupper($dato)=="ESTADO")
+	{
+		//  10302
+		//00
+		
+			// En creacion 1, horario creado 2, horario creado y otro en creacion 3
+			$sql1=mysql_query("SELECT * FROM HORARIOS WHERE ID_CURSO='".$id_curso."' AND ID_ANO_ESCOLAR='".$id_ano_escolar."'");	
+			 
+			$sql2=mysql_query("SELECT * FROM HORARIOS_TEMPORALES WHERE ID_CURSO='".$id_curso."' AND ID_ANO_ESCOLAR='".$id_ano_escolar."'");	
+		
+			if(mysql_num_rows($sql2)>0)
+			{
+				if(mysql_num_rows($sql1)>0)
+				{
+					return 3;
+				}else{
+					return 1;
+					
+				}
+				
+			}else{
+				if(mysql_num_rows($sql1)>0)
+				{
+					return 2;
+				}else{
+					return 0;
+					
+				}
+				
+			}
+		
+	}
+ 
+	if(strtoupper($dato)=="EXISTE")
+	{
+		 
+		$horario_consulta=mysql_query($sql);	
+			
+		if(mysql_num_rows($horario_consulta)>0)
+		{
+				
+			return 1;
+			
+		}else{
+			
+			return 0;	
+		}
+			
+	}else{
+		
+	 	
+	$horario_consulta=mysql_query($sql);		
+		
+		if(mysql_num_rows($horario_consulta)==1)
+		{
+ 
+				$datos_array=explode(",",$dato);		
+				$horario_datos=mysql_fetch_array($horario_consulta);	
+				//return  $dato;
+				
+				if($dato=="*")
+				{
+					return $horario_datos;
+				}else{
+					
+					if(count($datos_array)==1)
+					{
+	 
+						return $horario_datos[$dato];					
+					}else{
+						
+											
+						$horario_return=$horario_datos[$datos_array[0]];
+						
+						
+						for($x=1; $x<count($datos_array); $x++)
+						{
+	
+							$horario_return.="-separate-";	
+							$horario_return.=$horario_datos[$datos_array[$x]];
+						
+							 
+							 
+									
+						}//end for
+						
+						return $horario_return;
+					}
+				}
+		}else{
+			
+			return 0;	
+		}
+		
+		
+		
+		
+	}
+ 
+}
+
+
+
+
+
+
+
+
+//----------------------- Validar si estan en uso ------------------------------- //
+
+function asignatura_en_uso($id_asignatura)
+{
+	$horario_consulta=mysql_query("SELECT * FROM HORARIOS WHERE ID_ASIGNATURA='".$id_asignatura."'  ");
+	$horario_temporal_consulta=mysql_query("SELECT * FROM HORARIOS_TEMPORALES WHERE ID_ASIGNATURA='".$id_asignatura."'  ");
+	$curso_asignatura=mysql_query("SELECT * FROM CURSO_ASIGNATURA WHERE ID_ASIGNATURA='".$id_asignatura."' ");
+
+	if(mysql_num_rows($horario_consulta)>0)
+	{
+		return 1;
+	}
+	if(mysql_num_rows($horario_temporal_consulta)>0)
+	{
+		return 1;	
+	} 
+	if(mysql_num_rows($curso_asignatura)>0)
+	{
+		return 1;	
+	}
+	
+	
+	
+	return 0;
+	
+	
+}
+
+function curso_en_uso($id_curso)
+{
+	$horario_consulta=mysql_query("SELECT * FROM HORARIOS WHERE ID_CURSO='".$id_curso."'  ");
+	$horario_temporal_consulta=mysql_query("SELECT * FROM HORARIOS_TEMPORALES WHERE ID_CURSO='".$id_curso."' ");
+	$curso_asignatura=mysql_query("SELECT * FROM CURSO_ASIGNATURA WHERE ID_CURSO='".$id_curso."' ");
+	$matricula_curso=mysql_query("SELECT * FROM MATRICULAS   WHERE ID_CURSO='".$id_curso."' ");
+
+	if(mysql_num_rows($horario_consulta)>0)
+	{
+		return 1;
+	}
+	
+	if(mysql_num_rows($horario_temporal_consulta)>0)
+	{
+		return 1;	
+	}
+	
+	if(mysql_num_rows($curso_asignatura)>0)
+	{
+		return 1;	
+	}
+	if(mysql_num_rows($matricula_curso)>0)
+	{
+		return 1;	
+	}
+	
+	
+	return 0;
+	
+	
+}
+
+
+// ------------------------ Cosas completas -----------------------------//
+
+
+function curso_completo($id_curso)
+{
+
+	
+	$horario=mysql_query("SELECT * FROM HORARIOS WHERE ID_CURSO='".$id_curso."'  AND ID_ANO_ESCOLAR='".ano_escolar_actual()."' ");
+	
+	if(mysql_num_rows($horario)>0)
+	{
+		$asignatura=mysql_query("SELECT * FROM CURSO_ASIGNATURA WHERE ID_CURSO='".$id_curso."' AND ID_ANO_ESCOLAR='".ano_escolar_actual()."'");
+		
+		if(mysql_num_rows($asignatura)>0)
+		{
+			$matricula=mysql_query("SELECT * FROM MATRICULAS   WHERE ID_CURSO='".$id_curso."' AND ID_ANO_ESCOLAR='".ano_escolar_actual()."'");
+			
+			if(mysql_num_rows($matricula) )
+			{
+				return 1;
+			}else{
+				
+				return 0;
+				
+			}
+			
+		}else{
+			
+			return 0;	
+			
+		}
+
+	}else{
+	
+		return 0;	
+		
+	}
+	
+	
+	
+	
+	
+	
+}
+
+
+
+
+
+//	---- Enfermedad ----
+
+function existe_enfermedad( $nombre)
+{
+	$sql="select  * from ENFERMEDADES where NOMBRE_ENFERMEDAD='".$nombre."' ";
+	$enfermedad_consulta=mysql_query($sql);
+	
+
+
+	if(mysql_num_rows($enfermedad_consulta)==0)
+	{
+		
+		return false;
+		
+	}else{
+		
+		return true;	
+		
+	}
+	
+	
+}
+
+
+function datos_enfermedad($id=0 , $nombre=0, $dato)
+{
+	$sql="";	
+	if($id!=0)
+	{
+		$sql="select * from ENFERMEDADES  where ID_ENFERMEDAD='".$id."'  ";	
+		
+	}
+	if($nombre!=0)
+	{
+		$sql="select * from ENFERMEDADES  where NOMBRE_ENFERMEDAD='".$nombre."'  ";	
+		
+	}	
+	
+	$enfermedad_consulta=mysql_query($sql);
+
+	if(mysql_num_rows($enfermedad_consulta)==1)
+	{
+		$enfermedad_datos=mysql_fetch_array($enfermedad_consulta);
+		return $enfermedad_datos[$dato];
+		
+	}
+	
+	
+}
+
+
+function agregar_enfermedades($id_alumno=0, $rut_alumno=0, $lista_enfermedades)
+{		
+	
+ 	if($lista_enfermedades)
+	{
+		$enfermedades_array=explode(",",$lista_enfermedades);
+		mysql_query("DELETE  FROM ALUMNO_ENFERMEDADES WHERE ID_ALUMNO='".$id_alumno."' ");
+		for($x=0; $x<count($enfermedades_array); $x++)
+		{
+				if(datos_global($enfermedades_array[$x],"ID_ENFERMEDAD","ENFERMEDADES","EXISTE")==0)
+				{
+					if(datos_global($enfermedades_array[$x],"NOMBRE_ENFERMEDAD","ENFERMEDADES","EXISTE")==0)
+					{
+						mysql_query("insert into ENFERMEDADES set NOMBRE_ENFERMEDAD='".$enfermedades_array[$x]."'");	
+					}
+						$datos_enfermedad=mysql_fetch_array(mysql_query("SELECT * FROM ENFERMEDADES  WHERE NOMBRE_ENFERMEDAD='".$enfermedades_array[$x]."' "));
+						$id_enfermedad_insertar=$datos_enfermedad['ID_ENFERMEDAD'];
+					
+				}else{
+					$id_enfermedad_insertar=$enfermedades_array[$x];		 
+				}
+					mysql_query("INSERT INTO ALUMNO_ENFERMEDADES SET ID_ENFERMEDAD='".$id_enfermedad_insertar."' , ID_ALUMNO='".$id_alumno."' ");	
+			
+		}
+			
+		
+	}  
+	
+	
+}
+//----------
+
+
+
+
+//	---- medicamento ----
+
+function existe_medicamento( $nombre)
+{
+	$sql="select  * from MEDICAMENTOS where NOMBRE_MEDICAMENTO='".$nombre."' ";
+	$medicamento_consulta=mysql_query($sql);
+	
+
+
+	if(mysql_num_rows($medicamento_consulta)==0)
+	{
+		
+		return false;
+		
+	}else{
+		
+		return true;	
+		
+	}
+	
+	
+}
+
+
+function datos_medicamento($id=0 , $nombre=0, $dato)
+{
+	$sql="";	
+	if($nombre==0)
+	{
+		$sql="select * from MEDICAMENTOS  where ID_MEDICAMENTO='".$id."'  ";	
+		
+	}
+	if($id==0)
+	{
+		$sql="select * from MEDICAMENTOS  where NOMBRE_MEDICAMENTO='".$nombre."'  ";	
+		
+	}	
+	
+	$medicamento_consulta=mysql_query($sql);
+
+	if(mysql_num_rows($medicamento_consulta)==1)
+	{
+		$medicamento_datos=mysql_fetch_array($medicamento_consulta);
+		return $medicamento_datos[$dato];
+		
+	}
+	
+	
+}
+
+
+function agregar_medicamento($id_alumno=0, $rut_alumno=0, $lista_medicamentos)
+{		
+	
+ 	if($lista_medicamentos)
+	{
+		$medicamentos_array=explode(",",$lista_medicamentos);
+		mysql_query("DELETE  FROM ALUMNO_MEDICAMENTOS WHERE ID_ALUMNO='".$id_alumno."' ");
+		for($x=0; $x<count($medicamentos_array); $x++)
+		{
+				if(datos_global($medicamentos_array[$x],"ID_MEDICAMENTO","MEDICAMENTOS","EXISTE")==0)
+				{
+					if(datos_global($medicamentos_array[$x],"NOMBRE_MEDICAMENTO","MEDICAMENTOS","EXISTE")==0)
+					{
+						mysql_query("INSERT INTO MEDICAMENTOS SET NOMBRE_MEDICAMENTO='".$medicamentos_array[$x]."'");	
+					}
+						$datos_medicamento=mysql_fetch_array(mysql_query("SELECT * FROM MEDICAMENTOS  WHERE NOMBRE_MEDICAMENTO='".$medicamentos_array[$x]."' "));
+						$id_medicamento_insertar=$datos_medicamento['ID_MEDICAMENTO'];
+					
+				}else{
+					$id_medicamento_insertar=$medicamentos_array[$x];		 
+				}
+					mysql_query("INSERT INTO ALUMNO_MEDICAMENTOS SET ID_MEDICAMENTO='".$id_medicamento_insertar."' , ID_ALUMNO='".$id_alumno."' ");	
+			
+		}
+			 
+			
+			
+		
+			
+		
+	} 
+	
+	
+}
+//----------
+
+ 
+ 
+ 
+//--- Cursos ---
+function agregar_cursos_repetidos($id_alumno,$lista_cursos_repetidos)
+{
+	 	
+	if($lista_cursos_repetidos)
+	{
+		mysql_query("delete  from ANTECEDENTES_ESCOLARES_ALUMNO where Id_alumno='".$id_alumno."' ");
+		
+		$lista_cursos_repetidos_array=explode(",",$lista_cursos_repetidos);
+		
+		for($x=0; $x<count($lista_cursos_repetidos_array); $x++)
+		{
+			if($lista_cursos_repetidos_array[$x]!="" && $lista_cursos_repetidos_array!=" ")
+			{
+			
+				mysql_query("INSERT INTO ANTECEDENTES_ESCOLARES_ALUMNO SET ID_ANTECEDENTE='".$lista_cursos_repetidos_array[$x]."' , ID_ALUMNO='".$id_alumno."' ");
+			
+			}
+		}
+		
+	}	
+	
+	
+}
+
+// Funciones crear select   
+     
+function select_salud($id_del_select)
+{
+	$select_html="<select id='".$id_del_select."' name='".$id_del_select."'  class='form-control' required > ";
+	$consulta_salud=mysql_query("
+								SELECT * 
+								FROM PREVISIONES
+								
+								");
+	$select_html.="<option value selected>---Seleccione---</option> ";
+
+	while($datos_salud=mysql_fetch_array($consulta_salud))
+	{
+		 
+			$select_html.="<option value='".$datos_salud['ID_PREVISION']."' >".$datos_salud['NOMBRE_PREVISION']."</option> ";
+		
+	} 
+	
+	
+	$select_html.="</select>";
+	
+	return $select_html;
+}
+
+	
+	
+	
+function profesor_jefe($id_profesor,$id_curso ,$dato)
+{
+ 
+ 
+ $sql="";
+ 
+ 
+  if($id_profesor!=0 )
+ {
+    $sql="SELECT * FROM CURSO_PROFESORES JOIN CURSOS USING (ID_CURSO) JOIN PROFESORES USING(ID_PROFESOR) WHERE ID_PROFESOR='".$id_profesor."' AND ID_ANO_ESCOLAR='".ano_escolar_actual()."'"; 
+   //mysql_num_rows($curso_consulta);
+   //echo $sql;
+ }else{
+  if($id_curso!=0){
+  $sql="SELECT * FROM CURSO_PROFESORES JOIN CURSOS USING (ID_CURSO) JOIN PROFESORES USING(ID_PROFESOR)  WHERE ID_CURSO='".$id_curso."' AND ID_ANO_ESCOLAR='".ano_escolar_actual()."'"; 
+  
+  }
+ 
+ }
+   
+ if($dato=="existe")
+ {
+     
+  
+  $curso_consulta=mysql_query($sql); 
+   
+  if(mysql_num_rows($curso_consulta)==1)
+  {
+    
+   return 1;
+   
+  }else{
+   
+   return 0; 
+  }
+   
+ }else{
+   
+  $curso_consulta=mysql_query($sql);  
+   
+  if(mysql_num_rows($curso_consulta)==1)
+  {
+      
+     
+    $datos_array=explode(",",$dato);  
+    $profesor_curso=mysql_fetch_array($curso_consulta); 
+    //return  $dato;
+    
+    //return  $dato;
+				if($dato=="*")
+				{
+					return $profesor_curso   ;
+				}else{
+					if(count($datos_array)==1)
+					{
+						return $profesor_curso[$dato];					
+					}else{
+						$comuna_return=$profesor_curso[0];		
+	
+						for($x=1; $x<count($datos_array); $x++)
+						{
+	
+							$comuna_return.="-separate-";	
+							$comuna_return.=$profesor_curso[$datos_array[$x]];
+						
+							 
+							 
+									
+						}//end for
+						
+						return $comuna_return;
+					}
+				}
+ 
+     
+      
+ 
+  }else{
+   
+   return 0; 
+  }
+  
+  
+  
+  
+ }
+ 
+  
+}
+	
+	
+	
+function icono($icono,$tamaño=0)
+{
+	$li="";
+	
+	if($tamaño>0 && $tamaño<=5)
+	{
+			
+	}else{
+		$tamaño=1;
+	}
+	if(strtoupper($icono)=="ALERTA")	
+	{
+		 	
+		$li="fa-exclamation-triangle";
+			
+	}
+	if(strtoupper($icono)=="OK" || strtoupper($icono)=="CHECK" || strtoupper($icono)=="CHECK1")	
+	{
+		
+		$li="fa-check";
+			
+	}
+	
+	if(strtoupper($icono)=="WARNING")	
+	{
+		$li="fa-exclamation-circle";
+		$color="#F9D900";
+	}
+	
+	 
+	 
+	 return "<li class='fa ".$li."' 'fa-".$tamaño."x' ></li>  ";
+	
+	
+	
+	
+}
+
+function calcular_edad($fechanacimiento){
+	list($ano,$mes,$dia) = explode("-",$fechanacimiento);
+	$ano_diferencia  = date("Y") - $ano;
+	$mes_diferencia = date("m") - $mes;
+	$dia_diferencia   = date("d") - $dia;
+	if ($dia_diferencia < 0 || $mes_diferencia < 0)
+		$ano_diferencia--;
+	return $ano_diferencia; 
+}
+
+
+function tmb_creation($destino, $ancho_deseado, $origen_imagen, $nombre_imagen) {
+
+		$destino_imagen=$destino.$nombre_imagen; // asignamos el lugar donde se va a guardar
+		$dimensiones_imagen_original = getimagesize($origen_imagen);// obtenemos los datos de la imagen original
+		
+		// Verificamos al extension
+		if($dimensiones_imagen_original[2]==1){$imagen_original = imagecreatefromgif($origen_imagen);} 
+		if($dimensiones_imagen_original[2]==2){$imagen_original = imagecreatefromjpeg($origen_imagen);} 
+		if($dimensiones_imagen_original[2]==3){$imagen_original = imagecreatefrompng($origen_imagen);} 
+		 
+		// extraemos el ancho de la imagen
+		$ancho_imagen_original=$dimensiones_imagen_original[0];
+		$alto_imagen_original=$dimensiones_imagen_original[1];
+		
+		// Encontramos el nuevo alto para la imagen partiendo del ancho q enviamos
+		$relacion = $ancho_imagen_original/$ancho_deseado;
+		$alto_deseado = ceil($alto_imagen_original/$relacion);
+		$nueva_imagen = imagecreatetruecolor($ancho_deseado,$alto_deseado);
+		
+		if($dimensiones_imagen_original[2]==3)
+		{
+			//prueba transparencia png
+			$red = imagecolorallocate($nueva_imagen, 255, 0, 0);
+			$black = imagecolorallocate($nueva_imagen, 0, 0, 0);
+			
+			// Make the background transparent
+			imagecolortransparent($nueva_imagen, $black);
+		}
+		 
+		// creamos nuestra imagen
+		imagecopyresampled($nueva_imagen, $imagen_original, 0, 0, 0, 0, $ancho_deseado, $alto_deseado, $ancho_imagen_original, $alto_imagen_original);
+ 		
+		//imagepng($nueva_imagen, $destino_imagen, 100);
+
+		imagejpeg($nueva_imagen, $destino_imagen, 100);
+		imagegif($nueva_imagen, $destino_imagen, 100);  
+   
+}
+
+
+function nota_letra($devolver_letra_o_numero,$dato)
+{
+	if($devolver_letra_o_numero=="letra")
+	{		
+		if($dato>=10 && $dato<=39)
+		{
+			
+			return $dato_letra="I";
+			
+		}else{
+			
+			if($dato>=40 && $dato<=49)
+			{
+				return $dato_letra="S";
+				
+			}else{
+				if($dato>=50 && $dato<=59)
+				{
+					return $dato_letra="B";
+					
+				}else{
+					
+					return $dato_letra="MB";
+					
+				}
+			}
+		}
+	}else{
+		if($dato=="I")
+		{	
+			return 39;	
+		}
+		if($dato=="S")
+		{	
+			return 49;	
+		}
+		if($dato=="B")
+		{	
+			return 59;	
+		}
+		if($dato=="MB")
+		{	
+			return 70;	
+		}
+		
+	}
+}
+
+
+
+
+//*****************************************************			
+//**********************************************************************************************************************//
+//******************************************************* Reportes *****************************************************//
+//**********************************************************************************************************************//
+
+function cabecera_reporte1($titulo)
+{
+	$cabecera="<table  border=0>
+				  <tr>
+				  
+				  
+					<td width=160 >
+						<center>
+					   <img  width=70  src=../../imagenes/images/insignia_120.png >
+					
+						<br>
+						Escuela básica  
+						<br>Angelina Salas Olivares
+						<br>    Chañaral
+						</center>	
+					</td>
+					
+					<td width=240>
+						<br><br>
+							<h3><center>".$titulo."</h3></center>
+					</td>
+				   
+				   
+					<td width=101 align=right><br><br>
+					 ".date('d-m-Y')."
+					</td>
+				   
+				   
+				   
+				   </tr>
+			</table><BR><BR>";
+			
+	return $cabecera;
+
+ 
+}	
+//*****
+
+
+function reporte_ficha_matricula($id_matricula)
+{
+		
+	$matricula_consulta=mysql_query("SELECT * FROM MATRICULAS WHERE ID_MATRICULA='".$id_matricula."'  ");
+	//return "SELECT * FROM MATRICULAS WHERE ID_MATRICULA='".$id_matricula."'  ";
+	
+	$fichapdf=cabecera_reporte1("Ficha de matrícula");
+	
+	
+	if(mysql_num_rows($matricula_consulta)==1)
+	{
+		
+		$matricula_datos=mysql_fetch_array($matricula_consulta);
+		
+		$matricula_datos["FECHA_MATRICULA"];
+		$datos_alumno=datos_alumno(0,$matricula_datos["ID_ALUMNO"],"*");
+		
+		if(!is_null($datos_alumno["ID_PADRE"]))
+		{
+			$padre_datos=datos_padre(0,$datos_alumno["ID_PADRE"],"*");
+	
+		}else{
+			
+			$padre_datos=0;
+		}
+		
+		if(!is_null($datos_alumno["ID_MADRE"]))
+		{
+			$madre_datos=datos_madre(0,$datos_alumno["ID_MADRE"],"*");
+	
+		}else{
+			
+			$madre_datos=0;
+		}
+		
+		
+		$apoderado_datos=datos_apoderado($datos_alumno["ID_APODERADO"],0,0,0,"*");	
+		$apoderado_suplente_datos=datos_apoderado_suplente($datos_alumno["ID_APODERADOS"],0,0,0,"*");	
+		 
+		$titulo_padre="Datos padre ";
+		$titulo_madre="Datos madre ";
+		// APODERADOS
+		if($apoderado_datos["ID_MADRE"]>0)
+		{
+			$titulo_madre.=", apoderado";
+		}else{
+			
+			if($apoderado_datos["ID_PADRE"]>1)
+			{
+				$titulo_padre.=", apoderado";	
+			}
+		}
+		// APODERADOS suplente
+		if($apoderado_suplente_datos["ID_MADRE"]>0)
+		{
+				$titulo_madre.=", apoderado suplente";
+	
+		}else{
+			if($apoderado_suplente_datos["ID_PADRE"]>1)
+			{
+				$titulo_padre.=", apoderado suplente";	
+			}
+		}
+	
+		
+		if(count($matricula_datos["ETNIA_MATRICULA"])>2 ){
+			
+			$etnia=$matricula_datos["ETNIA_MATRICULA"];	
+		}else{
+			$etnia="No se ingresó etnia";
+			
+		}
+		 
+	
+		
+		
+	$fichapdf.=" 
+	
+	    <table class=tabla_ficha id=tabla_alumno>
+			<tr class=success>
+				<th colspan=5 class=th_titulo><center>Datos Alumno</center></th>
+				
+			</tr>
+			
+			<tr class=active>
+				<th> Nombre </th>
+				<th> Rut </th>
+				<th> Sexo </th>
+				<th> Fecha de nacimiento </th>
+				<th> ¿Con qiuen vive? </th>
+			</tr>
+			 <tr>
+				<td> ".$datos_alumno["NOMBRE_ALUMNO"]." ".$datos_alumno["APATERNO_ALUMNO"]." ".$datos_alumno["AMATERNO_ALUMNO"] ."</td>
+				<td> ".$datos_alumno["RUT_ALUMNO"] ." </td>
+				<td> ".$datos_alumno["SEXO_ALUMNO"] ."</td>
+				<td> ".formato_fecha("normal",$datos_alumno["FECHA_NAC_ALUMNO"]) ."</td>
+				<td> ".$matricula_datos["VIVE_CON_MATRICULA"] ." </td>
+			</tr>
+			
+			<tr class=active>
+				<th colspan=6>Dirección</tH>
+			</tr>
+			
+			<tr>
+				<td colspan=6>".$datos_alumno["DIRECCION_ALUMNO"].", ".datos_comuna($datos_alumno["ID_COMUNA"],0,"NOMBRE_COMUNA") ."</td>
+			</tr>
+			
+		</table>";
+		
+		
+		
+		
+		
+		$fichapdf.=" 
+		
+		<table class=tabla_ficha>
+			<tr >
+				<th colspan=7 class=th_titulo><center>Datos Escolares</center></th>
+				
+			</tr>
+			
+			<tr class=active>
+				<th>Previsión </th>
+				<th>Enfermedades </th>
+				<th>Medicamentos </th>
+				<th> Etnia </th>
+				<th>PAE</th>
+				<th> Subcidio </th>
+				<th> Chile Solidario</th>
+				
+			 
+				
+												
+			</tr>
+			 <tr>
+				<td>". $datos_alumno["ID_PREVISION"] ."</td>
+				<td> ".datos_enfermedades_alumno($datos_alumno["ID_ALUMNO"],"LISTA")." </td>
+				<td>  ".datos_medicamentos_alumno($datos_alumno["ID_ALUMNO"],"LISTA")."</td>
+				<td> ". $matricula_datos["PAE_MATRICULA"] ." </td>
+				<td>". $matricula_datos["CHILE_SOLIDARIO_MATRICULA"] ." </td>
+				<td>". $etnia." </td>
+				<td>".  $matricula_datos["SUBSIDIO_MATRICULA"] ."</td>
+	
+			</tr>
+			
+			<tr class=active>
+				<th> Luz</th>
+				<th> Agua </th>
+				<th> Alcantarillado </th>
+				<th>C.P.</th>
+				<th> Problema aprendizaje </th>
+				<th> Procedencia escolar </th>
+				<th> Alumno prioritario </th>
+				 
+				
+												
+			</tr>
+			 <tr>
+			 
+			 
+				<td>". $matricula_datos["LUZ_MATRICULA"] ."</td>
+				<td>". $matricula_datos["AGUA_MATRICULA"] ."</td>
+				<td>". $matricula_datos["ALCANTARILLADO_MATRICULA"] ." </td>
+					<td> ?? </td>
+				<td> ". $matricula_datos["PROBLEM_APRENDIZAJE_MATRICULA"] ." </td>
+				<td> ". $matricula_datos["PROCEDENCIA_ESCOLAR_MATRICULA"] ." </td>
+				<td>". $matricula_datos["APRIORITARIO_MATRICULA"] ."</td>
+				
+				
+				 
+			</tr>
+			
+			
+			
+			<tr class=active>
+				 
+				 
+				<th> Ingreso familiar</th>
+				<th> Clases de religión </th>
+				<th> Cursos Repetidos </th>
+					<th> Vivienda propia </th>
+				<th> N° de dormitorios</th>	 
+				<th></th>
+				<th></th>
+			 </tr>
+			 <tr>
+				 
+				<td>". $matricula_datos["INGRESO_FAMILIAR_MATRICULA"] ." </td>
+				<td>". $matricula_datos["RELIGION_MATRICULA"] ." </td>
+				<td>". 44  ."</td>
+					<td>". $matricula_datos["CASA_PROPIA_MATRICULA"] ." </td>
+				<td>". $matricula_datos["NDORMITORIOS_MATRICULA"] ." </td>
+				<td></td>
+				<td></td>
+			</tr>
+			
+		</table>"  ;
+		
+		
+		$fichapdf.="<table class=tabla_ficha>
+			<tr >
+				<th colspan=7 class=th_titulo><center>".$titulo_padre."</th>
+			</tr>";
+			
+			
+			
+			if($padre_datos==0)
+			{
+				 $fichapdf.="<tr><td colspan=7><center>El padre no fue ingresado.</center></td></tr> </table>";
+				
+			}else{
+			
+				$fichapdf.="<tr class=active>
+					<th> Nombre </th>
+					<th> Rut </th>
+					<th> fecha de nacimiento </th>
+					<th> Teléfono</th>                                          
+					<th> Escolaridad</th>   
+					<TH>Ocupacion</TH>                                       
+					<th> ¿Jefe de Hogar?</th>
+				</tr>
+				 <tr>
+					<td>".$padre_datos["NOMBRE_PADRE"]." ".$padre_datos["APATERNO_PADRE"]." ".$padre_datos["AMATERNO_PADRE"]." </td>
+					<td>".$padre_datos["RUT_PADRE"] ."</td>
+					<td>".formato_fecha("normal",$padre_datos["FECHA_NAC_PADRE"])." </td>
+					<td>".$padre_datos["TELEFONO_PADRE"]." </td>        
+					<td>".$padre_datos["ESCOLARIDAD_PADRE"]." </td>        
+					<td>".$padre_datos["OCUPACION_PADRE"]." </td>        
+					<td>".$padre_datos["JEFEH_PADRE"]." </td>
+		
+				</tr>
+				
+				<tr class=active>
+					
+					<th> Nacionalidad</th>
+					<th> Renta </th>
+					<th colspan=5> Dirección </th>
+					
+													
+				</tr>
+				 <tr>
+					<td>".$padre_datos["NACIONALIDAD_PADRE"] ."</td>
+					<td>"."$".formato_numero(1,0,$padre_datos["RENTA_PADRE"])." </td>
+					<td colspan=5>".$padre_datos["DIRECCION_PADRE"].", ".datos_comuna($padre_datos["ID_COMUNA"],0,"NOMBRE_COMUNA")."</td>
+				</tr>
+				</table>
+				";	
+		 }
+		 
+		 
+		 $fichapdf.="<table class=tabla_ficha>
+							<tr>
+								<th class=th_titulo colspan=7><center>".$titulo_madre."</th>
+							</tr>";
+			
+			if($madre_datos==0)
+			{
+				$fichapdf.="<tr ><td colspan=7><center>La madre no fue ingresada.</center></td></tr></table>";
+				
+			}else{
+				
+				
+				
+			$fichapdf.="<tr >
+						<th> Nombre </th>
+						<th> Rut </th>
+						<th> fecha de nacimiento </th>
+						<th> Teléfono</th>                                          
+						<th> Escolaridad</th>   
+						<TH>Ocupacion</TH>                                       
+						<th> ¿Jefe de Hogar?</th>
+					</tr>
+					 <tr>
+						<td>". $madre_datos["NOMBRE_MADRE"]." ".$MADRE_datos["APATERNO_MADRE"]." ".$MADRE_datos["AMATERNO_MADRE"]."</td>
+						<td>". $madre_datos["RUT_MADRE"] ." </td>
+						<td>". formato_fecha("normal",$madre_datos["FECHA_NAC_MADRE"])  ."</td>
+						<td>". $madre_datos["TELEFONO_MADRE"] ."</td>        
+						<td>". $madre_datos["ESCOLARIDAD_MADRE"] ."</td>        
+						<td>". $madre_datos["OCUPACION_MADRE"] ."</td>        
+						<td>". $madre_datos["JEFEH_MADRE"] ."</td>
+			
+					</tr>
+					
+					<tr>
+						
+						<th> Nacionalidad</th>
+						<th> Renta </th>
+						<th colspan=5> Dirección </th>
+						
+														
+					</tr>
+					 <tr>
+						<td>". $madre_datos["NACIONALIDAD_MADRE"] ." </td>
+						<td>". "$".formato_numero(1,0,$madreE_datos["RENTA_MADRE"] )." </td>
+						<td colspan=5>". $madre_datos["DIRECCION_MADRE"].", ".datos_comuna($madre_datos["ID_COMUNA"],0,"NOMBRE_COMUNA")."</td>
+					</tr>
+					</table>
+					";	
+					
+			
+			if(!is_null($apoderado_datos["NOMBRE_APODERADO"]))
+			{
+			$fichapdf.="
+				
+				 <table class=tabla_ficha >
+			 
+					<tr  >
+						<th colspan=5 class=th_titulo><center>Datos apoderado</center></th>
+						
+					</tr>
+			 
+					<tr >
+						<th> Nombre </th>
+						<th> Rut </th>
+						<th> Fono </th>
+						<th> parenteZco</th>                                          
+						<th> Direccion</th>    
+					</tr>
+					 <tr>
+						<td>".$apoderado_datos["NOMBRE_APODERADO"]." ".$apoderado_datos["APATERNO_APODERADO"]." ".$apoderado_datos["AMATERNO_APODERADO"] ."</td>
+						<td>".$apoderado_datos["RUT_APODERADO"] ." </td>
+						<td>".$apoderado_datos["FONO_APODERADO"] ."</td>
+						<td>".$apoderado_datos["PARENTEZCO_APODERADO"] ."</td>        
+						<td>".$apoderado_datos["DIRECCION_APODERADO"].", ".datos_comuna($apoderado_datos["ID_COMUNA"],0,"NOMBRE_COMUNA") ."</td>    
+			
+					</tr>
+				 
+			  
+			
+		</table>";	
+			}
+			
+			if(!is_null($apoderado_suplente_datos["NOMBRE_APODERADOS"]))
+			// Table fichas
+			{
+				
+				$fichapdf.="
+						 <table class=tabla_ficha >
+					 
+							<tr >
+								<th colspan=5 class=th_titulo><center>Datos apoderado Suplente</center></th>
+								
+							</tr>
+					
+					
+							<tr  >
+								<th> Nombre </th>
+								<th> Rut </th>
+								<th> Fono </th>
+								<th> parenteZco</th>                                          
+								<th> Direccion</th>    
+							</tr>
+							 <tr>
+								<td>".$apoderado_suplente_datos["NOMBRE_APODERADOS"]." ".$apoderado_suplente_datos["APATERNO_APODERADOS"]." ".$apoderado_suplente_datos["AMATERNO_APODERADOS"] ."</td>
+								<td>". $apoderado_suplente_datos["RUT_APODERADOS"] ." </td>
+								<td>". $apoderado_suplente_datos["FONO_APODERADOS"] ."</td>
+								<td>". $apoderado_suplente_datos["PARENTEZCO_APODERADOS"] ."</td>        
+								<td>". $apoderado_suplente_datos["DIRECCION_APODERADOS"].", ".datos_comuna($apoderado_suplente_datos["ID_COMUNA"],0,"NOMBRE_COMUNA") ."</td>    
+					
+							</tr>
+						 
+					  
+					
+						</table>";
+			}
+			
+			
+			
+		}
+		
+		}else{
+			
+			$fichapdf.="<table class=tabla_ficha>
+						<tr>
+							<th>  </th>
+							
+						</tr>
+						<tr>
+						
+							<td>La ficha de matrícula no existe</td>
+						</tr>
+						
+						</table>
+						";
+			
+			
+		}
+		
+		
+		return $fichapdf;
+}
+
+function reporte_informe_notas($id_alumno,$id_periodo)
+{
+	 
+	$datos_alumno=datos_alumno(0,$id_alumno,"*");
+	$datos_periodo=datos_global($id_periodo,"ID_PERIODO","PERIODOS_ESCOLARES","*");
+	$id_ano=$datos_periodo["ID_ANO_ESCOLAR"];
+	$datos_matricula=datos_matricula(0,$id_alumno,0,"*",$id_ano);
+
+	//return $datos_matricula;
+	
+	//return  "SELECT * FROM CURSO_ASIGNATURA WHERE 	ID_CURSO='".$datos_matricula["ID_CURSO"]."' AND ID_ANO_ESCOLAR='".$id_ano."' ";
+	$asignatura_consulta=mysql_query("SELECT * FROM CURSO_ASIGNATURA WHERE 	ID_CURSO='".$datos_matricula["ID_CURSO"]."' AND ID_ANO_ESCOLAR='".$id_ano."' ");
+ 
+  
+ 
+	$pdf=cabecera_reporte1("Informe de notas");
+	/*
+	$pdf.="Este informe de notas corresponde a las notas parciales obtenidas hasta la fecha  por <b> ".$datos_alumno["NOMBRE_ALUMNO"]." ".$datos_alumno["APATERNO_ALUMNO"]." ".$datos_alumno["AMATERNO_ALUMNO"]." </b> del <b>".datos_global($datos_matricula["ID_CURSO"],"ID_CURSO","CURSOS","NOMBRE_CURSO")."</b> en el <b>".$datos_periodo["NOMBRE_PERIODO"]." del  ".datos_global($id_ano,"ID_ANO_ESCOLAR","ANO_ESCOLAR","ANO_ESCOLAR")."</b>";	
+	*/
+	
+	$pdf.="<b>Nombre del alumno: </b>".$datos_alumno["NOMBRE_ALUMNO"]." ".$datos_alumno["APATERNO_ALUMNO"]." ".$datos_alumno["AMATERNO_ALUMNO"];
+	$pdf.="<br>";
+	$pdf.="<b>Curso: </b>".datos_global($datos_matricula["ID_CURSO"],"ID_CURSO","CURSOS","NOMBRE_CURSO");
+	$pdf.="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Semestre: </b>".$datos_periodo["NOMBRE_PERIODO"];
+	
+	
+	
+	
+	$pdf.="<br><br>";
+
+	
+	//echo mysql_num_rows($asignatura_consulta).  mysql_num_rows($consulta_prueba);
+	if(mysql_num_rows($asignatura_consulta)>0)
+	{
+		
+			//Calcular cuantas es la cantidad maximad e notas q hay
+			$cantidad_maxima=0;
+			
+			while($datos_asignatura=mysql_fetch_array($asignatura_consulta))
+			{
+				$consulta_prueba=mysql_query("SELECT * FROM PRUEBAS WHERE ID_CURSO='".$datos_matricula["ID_CURSO"]."' AND ID_ASIGNATURA='".$datos_asignatura["ID_ASIGNATURA"]."' AND ID_PERIODO='".$id_periodo."' ");
+				$cantidad_notas=0;
+				
+				while($prueba_datos=mysql_fetch_array($consulta_prueba))
+				{
+					$cantidad_notas=$cantidad_notas+1;
+				
+				}
+				if($cantidad_maxima<$cantidad_notas)
+				{
+					$cantidad_maxima=$cantidad_notas;	
+				}
+				
+			}
+			
+		 	
+			
+			$pdf.="<table width=100% class=tabla_ficha  >
+				     <tr>";
+				
+				$pdf.="   <th> Asignatura </th>";
+				
+				for($x=1; $x<=$cantidad_maxima; $x++)
+				{
+					$pdf.="<th> N ".$x." </th>";	
+				}
+				$pdf.="    <th> Promedio </th>";
+				
+			$pdf.="  </tr>";
+			
+			
+			// ----------------- Poniendo asignaturas ------------------
+			
+		$asignatura_consulta=mysql_query("SELECT * FROM CURSO_ASIGNATURA WHERE 	ID_CURSO='".$datos_matricula["ID_CURSO"]."' AND ID_ANO_ESCOLAR='".$id_ano."' ");
+ 
+  		
+			while($datos_asignatura=mysql_fetch_array($asignatura_consulta))
+			{
+				$consulta_prueba=mysql_query("SELECT * FROM PRUEBAS WHERE ID_CURSO='".$datos_matricula["ID_CURSO"]."' AND ID_ASIGNATURA='".$datos_asignatura["ID_ASIGNATURA"]."' AND ID_PERIODO='".$id_periodo."' ");
+				$cantidad_notas=0;
+				
+				$pdf.="<tr>
+						<td> ".datos_global($datos_asignatura["ID_ASIGNATURA"],"ID_ASIGNATURA","ASIGNATURAS","NOMBRE_ASIGNATURA")."</td>
+						";
+				$suma_prueba=0;
+				$cantidad_prueba=0;
+				$contador_notas=0;
+				$contador_nota_promedio=0;
+				$tipo_asignatura=0;
+				while($prueba_datos=mysql_fetch_array($consulta_prueba))
+				{
+					$nota_consulta=mysql_query("SELECT * FROM NOTAS WHERE ID_PRUEBA='".$prueba_datos["ID_PRUEBA"]."' AND ID_ALUMNO='".$datos_alumno["ID_ALUMNO"]."'  ");
+					
+					if(mysql_num_rows($nota_consulta)==0)
+					{
+						$nota=" ";
+						$valor_nota=0;
+						
+					}else{
+
+							$nota_dato=mysql_fetch_array($nota_consulta);
+							$valor_nota=$nota_dato["NOTA"];
+							$nota=$nota_dato["NOTA"];
+						 
+							if($nota=="MB")
+							{
+								$valor_nota=70;
+								$nota=$nota_dato["NOTA"];
+								$tipo_asignatura=1;
+							}
+							if($nota=="B")
+							{
+								$valor_nota=59;
+								$nota=$nota_dato["NOTA"];	
+								$tipo_asignatura=1;
+							}
+							if($nota=="S")
+							{
+								$valor_nota=49;
+								$nota=$nota_dato["NOTA"];	
+								$tipo_asignatura=1;
+							}
+							if($nota=="I")
+							{
+								$valor_nota=39;
+								$nota=$nota_dato["NOTA"];	
+								$tipo_asignatura=1;
+							}
+							
+						 				 
+							 
+							$suma_prueba=$suma_prueba+ $valor_nota;
+							$contador_nota_promedio=$contador_nota_promedio+1;
+ 					
+						 
+					}				
+					$pdf.="<td> ".$nota."  </td>";
+					$suma_prueba=$suma_prueba+$prueba_datos["NOTA"];
+					$cantidad_prueba=$cantidad_prueba+1;
+					
+					$contador_notas=$contador_notas+1;
+					
+				}
+	
+				if($suma_prueba==0)
+				{			
+					$promedio=""	;
+				}else{
+					$promedio=round($suma_prueba/$contador_nota_promedio);
+					if($tipo_asignatura==1)
+					{
+						if($promedio<=70 && $promedio>=60)
+						{
+							$promedio="MB";	
+						}else{
+							if($promedio<=59 && $promedio>=50)
+							{
+								$promedio="B";	
+							}else{
+								if($promedio<=49 && $promedio>=40)
+								{
+									$promedio="S";	
+								}else{
+									if($promedio>=0 && $promedio<=39)
+									{
+										$promedio="I";	
+									}
+												
+								}
+							}
+							
+						}
+						
+						
+						
+						 
+						
+						
+					}
+				}
+				
+				
+				if($contador_notas< $cantidad_maxima)
+				{
+					for($y=$contador_notas; $y<$cantidad_maxima; $y++)
+					{
+						$pdf.="<td></td>";
+					}
+				}
+				
+				$pdf.="<td>".$promedio."</td>";
+				
+				$pdf.="</tr>";				
+			}
+			
+			
+			$pdf.="</table>";
+			
+			//-----------
+			$dias_de_clases=mysql_num_rows(mysql_query("SELECT * FROM ASISTENCIAS WHERE ID_ALUMNO='".$id_alumno."' AND ID_ANO_ESCOLAR='".ano_escolar_actual()."'  "));
+			
+			$dias_presente=mysql_num_rows(mysql_query("SELECT * FROM ASISTENCIAS WHERE ID_ALUMNO='".$id_alumno."' AND ID_ANO_ESCOLAR='".ano_escolar_actual()."' AND ESTADO_ASISTENCIA='presente' "));
+			
+			$dias_ausente=mysql_num_rows(mysql_query("SELECT * FROM ASISTENCIAS WHERE ID_ALUMNO='".$id_alumno."' AND ID_ANO_ESCOLAR='".ano_escolar_actual()."' AND ESTADO_ASISTENCIA='ausente' "));
+			//--------------
+			
+			
+			
+			
+			$pdf.="<table width=100% class=tabla_ficha  >
+				     <tr>
+					   
+					   <th>Dias trabajados</th>
+				       <th>Asistencia</th>
+					   <th>Inasistencia</th>
+				  	  </tr>
+					  
+					  <tr>
+				  		<td>".$dias_de_clases."</td>
+						<td>".$dias_presente."</td>
+						<td>".$dias_ausente."</td>
+				  	  </tr>
+					  </table>
+				  ";
+				  
+			$pdf.="<br><br><br>Observaciones: _______________________________________________________________<br><br>";
+			$pdf.="____________________________________________________________________________<br><br>";
+			$pdf.="____________________________________________________________________________<br><br>";
+			$pdf.="____________________________________________________________________________";
+	 
+	}else{
+		
+		// Si no hay asignaturas anotadas al curso	
+		
+		$pdf.="<table width=100% class=tabla_ficha  >
+				     <tr>";
+				
+				$pdf.="   <th> Asignatura </th>";
+				
+			$pdf.="  </tr>
+					<tr>
+					
+						<td>El curso no tiene asignaturas este año</td>
+					
+					</tr></table>
+					 
+					";
+			
+		
+		
+	}// end if asignatura
+
+	return $pdf;
+	
+}
+
+function reporte_nomina_curso($id_curso,$id_periodo)
+{
+	$curso_datos=datos_global($id_curso,"ID_CURSO","CURSOS","*");
+	$pdf=cabecera_reporte1("Nomina de curso - ".$curso_datos["NOMBRE_CURSO"]);
+	$pdf.="<table class=tabla_ficha>
+		 <tr>
+		 	<th>N°</th>
+			<th>Alumno</th>
+			<th>RUN</th>
+			<th>Fecha de nacimiento</th>
+			<th>Fecha de retiro</th>
+			
+		</tr>
+		";
+	
+	$id_ano_escolar=datos_global($id_periodo,"ID_PERIODO","PERIODOS_ESCOLARES","*");
+	$alumnos_consulta=mysql_query("SELECT * 
+								   FROM ALUMNOS AS AL JOIN MATRICULAS AS MA USING(ID_ALUMNO) 
+								   WHERE ID_CURSO='".$id_curso."' AND ID_ANO_ESCOLAR='".$id_ano_escolar["ID_ANO_ESCOLAR"]."'  ");
+	
+	$contador=0;
+	while($alumnos_datos=mysql_fetch_array($alumnos_consulta))
+	{
+		$contador++;
+		
+		$pdf.="<tr>
+					<td>".$contador."</td>
+					<td>".$alumnos_datos["NOMBRE_ALUMNO"]." ".$alumnos_datos["APATERNO_ALUMNO"]." ".$alumnos_datos["AMATERNO_ALUMNO"]."</td>
+					<td>".$alumnos_datos["RUT_ALUMNO"]."</td>
+					<td>".$alumnos_datos["FECHA_NAC_ALUMNO"]."</td>
+					<td>-</td>
+					
+		       </tr>";	
+		
+	}
+	
+	
+	
+	$pdf.="</table>";
+ 
+ 
+ 	return $pdf;
+}
+
+
+
+

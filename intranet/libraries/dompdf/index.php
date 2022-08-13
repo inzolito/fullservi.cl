@@ -1,0 +1,105 @@
+<?php 
+# Cargamos la librería dompdf.
+include("../../functions/funciones.php");
+require_once 'dompdf_config.inc.php';
+ 
+# Contenido HTML del documento que queremos generar en PDF.
+
+$nombre_pdf=$_REQUEST["nombre_pdf"]." ".date('d-m-Y')." ".date('h:i:s').".pdf";
+$titulo=$_REQUEST["titulo_pdf"];
+$contenido_pdf=$_REQUEST["html_pdf"];
+$tipo_pdf=$_REQUEST['tipo_pdf'];
+ 
+ ini_set("memory_limit","4000M");
+
+$html='
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link rel="stylesheet" href="estilos_pdf.css" type="text/css">
+
+<title></title> 
+</head>
+<body>
+ '.$cabecera."<br><br>".$contenido_pdf.'
+ 
+</body>
+</html>';
+
+
+
+
+ 
+// para poner el numero depagina es  -->   <span class="pagenum"></span>
+ 
+ 
+ 
+ 
+ 
+ 
+ /* 
+ 
+ 
+     $dompdf = new DOMPDF();
+	 $html=utf8_decode(utf8_encode($html));
+     $dompdf->load_html($html);
+	 $canvas = $dompdf->get_canvas();
+     $canvas->page_text(1,1, "{PAGE_NUM} of {PAGE_COUNT}", $font, 10, array(0,0,0));
+     $dompdf->set_paper('A4', 'portrait');
+     $dompdf->render();
+     $dompdf->stream($nombre_pdf);
+ 
+ 
+ 
+*/
+ if($tipo_pdf=='horizontal') {
+	 
+	$mipdf = new DOMPDF();
+
+
+//$canvas = $mipdf->get_canvas();
+//page_text($x, $y, $text, $font, $size, $color = array(0,0,0), $adjust = 0, $angle = 0) 
+//$canvas->page_text(1,1, "{PAGE_NUM} of {PAGE_COUNT}", $font, 10, array(0,0,0),0,0);
+ 
+# Definimos el tamaño y orientación del papel que queremos.
+# O por defecto cogerá el que está en el fichero de configuración.
+$mipdf ->set_paper("legal", "landscape");	
+ 
+# Cargamos el contenido HTML.
+$mipdf ->load_html(utf8_decode(utf8_encode($html)));
+ 
+# Renderizamos el documento PDF.
+$mipdf ->render();
+ 
+# Enviamos el fichero PDF al navegador.
+$mipdf ->stream($nombre_pdf); 
+	 
+ }else{
+	 
+	 
+# Instanciamos un objeto de la clase DOMPDF.
+$mipdf = new DOMPDF();
+
+
+//$canvas = $mipdf->get_canvas();
+//page_text($x, $y, $text, $font, $size, $color = array(0,0,0), $adjust = 0, $angle = 0) 
+//$canvas->page_text(1,1, "{PAGE_NUM} of {PAGE_COUNT}", $font, 10, array(0,0,0),0,0);
+ 
+# Definimos el tamaño y orientación del papel que queremos.
+# O por defecto cogerá el que está en el fichero de configuración.
+$mipdf ->set_paper("legal", "portrait");	
+ 
+# Cargamos el contenido HTML.
+$mipdf ->load_html(utf8_decode(utf8_encode($html)));
+ 
+# Renderizamos el documento PDF.
+$mipdf ->render();
+ 
+# Enviamos el fichero PDF al navegador.
+$mipdf ->stream($nombre_pdf);
+	 
+ }
+ 
+
+
+?>

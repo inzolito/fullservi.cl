@@ -1,0 +1,44 @@
+@font-face {
+    font-family: "calibri";
+    src: url(../libraries/fonts/calibri/Calibri.ttf) format("truetype");
+    
+    
+    
+    
+}
+
+#contenedor{
+	width: 800px;
+	
+	
+}
+
+#foto{
+	width:148px;
+	height:148px;
+	border: 1px solid;
+	float:left;
+	
+}
+
+#cont-datos{
+	margin-left:20px;
+	float:left;
+	
+	
+}
+
+.titulo-table{
+	
+	color:#09CBFF;
+	font-size: 14px;
+	
+}
+
+.info{
+	
+	color:#7C7878;
+	font-size: 14px;
+	
+}
+

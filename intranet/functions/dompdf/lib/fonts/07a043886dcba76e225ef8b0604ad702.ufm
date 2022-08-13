@@ -1,0 +1,119 @@
+StartFontMetrics 4.1
+Notice Converted by PHP-font-lib
+Comment http://php-font-lib.googlecode.com/
+EncodingScheme FontSpecific
+Copyright Copyright (c) 2011 by Just Be Nice studio. All rights reserved.
+FontName Web Symbols
+UniqueID 1.000;JBN;WebSymbols-Regular
+FullName WebSymbols-Regular
+Version Version 1.000;PS 001.001;hotconv 1.0.56
+PostScriptName WebSymbols-Regular
+Trademark Web Symbols is a trademark of Just Be Nice studio.
+Manufacturer Just Be Nice studio
+Designer Igor Kiselev
+Description Web Symbols Regular is a font by Just Be Nice studio, designed by Igor Kiselev in 2011.
+FontVendorURL http://www.justbenicestudio.com
+FontDesignerURL http://wwwigorkiselev.com
+FontSubfamily Regular
+Weight Medium
+ItalicAngle 0
+IsFixedPitch false
+UnderlineThickness 50
+UnderlinePosition -75
+FontHeightOffset 200
+Ascender 801
+Descender -199
+FontBBox 0 -200 1550 869
+StartCharMetrics 91
+U 32 ; WX 250 ; N uni0020 ; G 1
+U 33 ; WX 1000 ; N uni0021 ; G 2
+U 35 ; WX 965 ; N uni0023 ; G 3
+U 37 ; WX 1000 ; N uni0025 ; G 4
+U 38 ; WX 1000 ; N uni0026 ; G 5
+U 39 ; WX 1000 ; N uni0027 ; G 84
+U 40 ; WX 1000 ; N uni0028 ; G 6
+U 41 ; WX 1000 ; N uni0029 ; G 7
+U 42 ; WX 1000 ; N uni002a ; G 8
+U 43 ; WX 1000 ; N uni002b ; G 9
+U 44 ; WX 1000 ; N uni002c ; G 10
+U 45 ; WX 1000 ; N uni002d ; G 11
+U 46 ; WX 1179 ; N uni002e ; G 12
+U 47 ; WX 1000 ; N uni002f ; G 13
+U 48 ; WX 1000 ; N uni0030 ; G 14
+U 49 ; WX 1000 ; N uni0031 ; G 15
+U 50 ; WX 1000 ; N uni0032 ; G 16
+U 51 ; WX 1000 ; N uni0033 ; G 17
+U 52 ; WX 1000 ; N uni0034 ; G 18
+U 53 ; WX 1000 ; N uni0035 ; G 19
+U 54 ; WX 1000 ; N uni0036 ; G 20
+U 55 ; WX 1000 ; N uni0037 ; G 21
+U 58 ; WX 1000 ; N uni003a ; G 22
+U 59 ; WX 1000 ; N uni003b ; G 23
+U 60 ; WX 654 ; N uni003c ; G 24
+U 62 ; WX 654 ; N uni003e ; G 25
+U 63 ; WX 586 ; N uni003f ; G 26
+U 64 ; WX 1360 ; N uni0040 ; G 27
+U 65 ; WX 1113 ; N uni0041 ; G 28
+U 66 ; WX 1000 ; N uni0042 ; G 29
+U 67 ; WX 1435 ; N uni0043 ; G 30
+U 68 ; WX 1091 ; N uni0044 ; G 31
+U 70 ; WX 1391 ; N uni0046 ; G 32
+U 72 ; WX 1500 ; N uni0048 ; G 33
+U 73 ; WX 1360 ; N uni0049 ; G 34
+U 74 ; WX 1360 ; N uni004a ; G 35
+U 75 ; WX 1000 ; N uni004b ; G 36
+U 76 ; WX 1000 ; N uni004c ; G 37
+U 77 ; WX 1360 ; N uni004d ; G 38
+U 78 ; WX 1063 ; N uni004e ; G 39
+U 79 ; WX 1063 ; N uni004f ; G 40
+U 80 ; WX 1000 ; N uni0050 ; G 41
+U 81 ; WX 1000 ; N uni0051 ; G 42
+U 82 ; WX 1050 ; N uni0052 ; G 43
+U 83 ; WX 1000 ; N uni0053 ; G 44
+U 84 ; WX 925 ; N uni0054 ; G 45
+U 85 ; WX 1070 ; N uni0055 ; G 46
+U 86 ; WX 857 ; N uni0056 ; G 47
+U 87 ; WX 1113 ; N uni0057 ; G 48
+U 88 ; WX 1188 ; N uni0058 ; G 49
+U 90 ; WX 1217 ; N uni005a ; G 50
+U 91 ; WX 529 ; N uni005b ; G 51
+U 92 ; WX 1000 ; N uni005c ; G 52
+U 93 ; WX 529 ; N uni005d ; G 53
+U 95 ; WX 1360 ; N uni005f ; G 54
+U 96 ; WX 1000 ; N uni0060 ; G 85
+U 97 ; WX 760 ; N uni0061 ; G 55
+U 98 ; WX 1316 ; N uni0062 ; G 56
+U 99 ; WX 1137 ; N uni0063 ; G 57
+U 100 ; WX 1179 ; N uni0064 ; G 58
+U 101 ; WX 1179 ; N uni0065 ; G 59
+U 102 ; WX 1000 ; N uni0066 ; G 60
+U 103 ; WX 1000 ; N uni0067 ; G 61
+U 104 ; WX 1185 ; N uni0068 ; G 62
+U 105 ; WX 1550 ; N uni0069 ; G 63
+U 106 ; WX 1185 ; N uni006a ; G 64
+U 107 ; WX 1000 ; N uni006b ; G 65
+U 108 ; WX 1000 ; N uni006c ; G 66
+U 109 ; WX 1000 ; N uni006d ; G 67
+U 110 ; WX 1000 ; N uni006e ; G 68
+U 111 ; WX 1000 ; N uni006f ; G 69
+U 112 ; WX 1000 ; N uni0070 ; G 70
+U 113 ; WX 1000 ; N uni0071 ; G 71
+U 114 ; WX 1000 ; N uni0072 ; G 72
+U 115 ; WX 1000 ; N uni0073 ; G 73
+U 116 ; WX 1003 ; N uni0074 ; G 74
+U 117 ; WX 963 ; N uni0075 ; G 75
+U 118 ; WX 1000 ; N uni0076 ; G 76
+U 119 ; WX 582 ; N uni0077 ; G 77
+U 120 ; WX 582 ; N uni0078 ; G 78
+U 121 ; WX 1000 ; N uni0079 ; G 79
+U 122 ; WX 1000 ; N uni007a ; G 80
+U 123 ; WX 471 ; N uni007b ; G 81
+U 125 ; WX 471 ; N uni007d ; G 82
+U 126 ; WX 1000 ; N uni007e ; G 83
+U 127 ; WX 1000 ; N uni007f ; G 90
+U 178 ; WX 1000 ; N uni00b2 ; G 87
+U 179 ; WX 1000 ; N uni00b3 ; G 89
+U 185 ; WX 1000 ; N uni00b9 ; G 86
+U 215 ; WX 1000 ; N uni00d7 ; G 88
+EndCharMetrics
+EndFontMetrics

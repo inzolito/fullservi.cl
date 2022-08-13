@@ -1,0 +1,452 @@
+ 
+/***************************************************************************************/
+html´{
+	margin:0;
+	
+}
+body{
+	font-family: sans-serif;	
+	font-size:12px;
+}
+
+.tabla_cabecera{
+	margin-top:-40px;
+	vertical-align:bottom;	
+	
+}
+.tabla_cabecera tr td{
+	 
+	vertical-align:bottom;	
+	
+}
+
+.tabla1{
+	
+	
+}
+.tabla1 tr th{
+	background-color:#0B93C4;
+	color:#FFFFFF;
+}
+
+.tabla1 tr td{
+	padding-left:15px;
+	
+	
+}
+
+.titulo_tabla{
+background-color:#02507C;
+color:#ffd700;	
+border:1px solid black;
+}
+
+.celda_invisible{
+	font-size:12px;
+	border:none;
+	border:0px solid black;
+}
+
+/***************/
+
+
+.tabla_fea{
+	width:100%;	
+	background-color: white;
+	font-size:12px;
+ 	height:auto;
+	margin:10px 0 10px 0;
+	/*border-collapse:collapse;*/
+	color:#000;
+	margin-bottom:10px;
+	margin-top:10px;
+	 
+    	border-collapse: collapse;
+}
+
+.tabla_fea tr{
+    /* Todas las filas blancas */
+   
+}
+
+.tabla_fea td{
+    /* Filas impares grises */ 
+}
+
+.tabla_fea th{
+	background-color:#F1F1F1;
+	border-bottom:1px solid #000000;
+	text-align:left;
+
+	
+}
+
+.fila_fin_tabla_fea th{
+	border-top:1px solid #000000;	
+}
+
+
+
+
+/*-----------------------------------------------------*/
+
+.tabla_ficha{
+	font-size:12px;
+	width:100%;
+	height:auto;
+	margin:10px 0 10px 0;
+	/*border-collapse:collapse;*/
+	color:#000;
+	margin-bottom:10px;
+	margin-top:10px;
+	 
+	border: 1px solid #000;
+  	border-collapse: collapse;
+	
+}
+  
+.tabla_ficha tr th{
+	 border: 1px solid #000;
+ 	 border-collapse: collapse;
+	border-color: #666;
+
+	padding-top:5px;
+	padding-left:5px;
+	padding-right:5px;
+	padding-bottom:5px;
+	text-align:left;
+	color:#FFFFFF;	 
+	background-color:#b63b4d;
+}
+
+.tabla_ficha tr td {
+	padding-left:15px;
+	 border: 1px solid #000;
+ 	 border-collapse: collapse;
+	border-color: #666;
+
+	
+	
+}
+
+.tabla_ficha tr td ul{  
+margin:0;  
+padding:0;  
+list-style-type:circle;  
+} 
+
+.header,
+.footer {
+    width: 100%;
+    text-align: center;
+    position: fixed;
+}
+.header {
+    top: 0px;
+}
+.footer {
+    bottom: 0px;
+	height:10%;
+}
+.pagenum:before {
+    content: counter(page);
+}
+
+/************modelo ficha dos**********/
+
+
+
+.tabla_ficha_nueva{
+	font-size:12px;
+	width:100%;
+	height:auto;
+	margin:10px 0 10px 0;
+	/*border-collapse:collapse;*/
+	color:#000;
+	margin-bottom:10px;
+	margin-top:10px;
+	 
+	border: 0px solid #000;
+ 	
+}
+ 
+.tabla_ficha_nueva tbody tr th{
+	 border: 0px solid #000;
+	 border-collapse: separate;
+    border-spacing: 10px 50px;
+	border-color: #666;
+	padding-top:5px;
+	padding-left:5px;
+	padding-right:5px;
+	padding-bottom:5px;
+	text-align:left;
+	color:#000000;
+		 
+}
+
+.tabla_ficha_nueva tbody tr td {
+	padding-left:15px;
+	 border: 0px solid #000;
+ 	 
+	border-color: #666;
+	border-collapse: separate;
+    border-spacing: 10px 50px;
+
+	
+	
+}
+
+.tabla_ficha_nueva tbody tr td ul{  
+margin:0;  
+padding:0;  
+list-style-type:circle;  
+} 
+
+
+/*----------------------------------------------------------*/
+
+
+.tabla_border{
+	font-size:12px;
+	width:100%;
+	height:auto;
+	margin:10px 0 10px 0;
+	/*border-collapse:collapse;*/
+	color:#000;
+	margin-bottom:10px;
+	margin-top:10px;
+	border-collapse:collapse;
+	border: 1px solid #000;
+ 	
+}
+ 
+.tabla_border tbody tr th{
+ 	 border-collapse: separate;
+    border-spacing: 10px 50px;
+	border-color: #666;
+	padding-top:5px;
+	padding-left:5px;
+	padding-right:5px;
+	padding-bottom:5px;
+	text-align:left;
+    color: #ffffff;
+    border: 1px solid #000;
+    background-color: #e00814;
+	
+		 
+}
+
+.tabla_border tbody tr td {
+	padding-left:15px;
+  	 
+	border-color: #666;
+	border-collapse: separate;
+    border-spacing: 10px 50px;
+	border: 1px solid #000;
+	padding:0;
+	
+	
+}
+
+.tabla_border tbody tr td ul{   
+margin:0;  
+padding:0;  
+list-style-type:circle;  
+} 
+
+.td_coloreado_fuerte{
+	padding-left:15px;
+  	border-color: #666;
+	border-collapse: separate;
+    border-spacing: 10px 50px;
+	border: 1px solid #000;
+	padding:0;
+    color: #ffffff;
+    background-color: #e00814;	
+}
+/*-------------------------------------------------------*/
+
+
+
+.tabla_informe_personalidad{
+	font-size:12px;
+	width:100%;
+	height:auto;
+	margin:10px 0 10px 0;
+	/*border-collapse:collapse;*/
+	color:#000;
+	margin-bottom:10px;
+	margin-top:10px;
+	 
+	border: 1px solid #000;
+ 	
+}
+
+.tabla_informe_personalidad tr th{
+	 
+ border-collapse: separate;
+    border-spacing: 10px 50px;
+	
+	padding-top:5px;
+	padding-bottom:5px;
+	text-align:center;
+	color:#000000;
+	border: 1px solid #000;
+}
+
+
+.tabla_informe_personalidad tr td {
+	padding-left:15px;
+	 border: 1px solid #000;
+ 	 
+	border-color: #666;
+	border-collapse: separate;
+    border-spacing: 10px 50px;
+
+	
+	
+}
+
+
+.tabla_escala{
+	font-size:12px;
+	width:50%;
+	height:auto;
+	margin:10px 0 10px 0;
+	/*border-collapse:collapse;*/
+	color:#000;
+	margin-bottom:10px;
+	margin-top:10px;
+	 
+	border: 1px solid #000;
+}
+
+.tabla_escala tr th{
+	 
+ border-collapse: separate;
+    border-spacing: 10px 50px;
+	
+	padding-top:5px;
+	padding-bottom:5px;
+	text-align:center;
+	color:#000000;
+	border: 1px solid #000;
+	
+}
+
+.tabla_escala tr td {
+	padding-left:15px;
+	 border: 1px solid #000;
+ 	 
+	border-color: #666;
+	border-collapse: separate;
+    border-spacing: 10px 50px;
+
+	
+	
+}
+
+.tabla_acta_semestral{
+	
+	font-size:10px;
+	width:100%;
+	height:auto;
+	margin:10px 0 10px 0;
+	/*border-collapse:collapse;*/
+	color:#000;
+	margin-bottom:10px;
+	margin-top:10px;
+	 
+	border: 1px solid #000;
+	
+	
+
+}
+
+
+.tabla_acta_semestral tr th{
+	 
+ border-collapse: separate;
+    border-spacing: 10px 50px;
+	
+	padding-top:5px;
+	padding-bottom:5px;
+	text-align:center;
+	color:#000000;
+	border: 1px solid #000;
+}
+
+.tabla_acta_semestral tr td {
+	padding-left:15px;
+	 border: 1px solid #000;
+ 	 
+	border-color: #666;
+	border-collapse: separate;
+    border-spacing: 10px 50px;
+
+	
+	
+}
+/**************************************/
+
+
+
+  
+    .logocolegio{
+        float: left;
+    }
+    
+    .membrete{
+        margin-left: 5px;
+        float: left;
+        font-size: 10px;
+    }
+    
+    .imagenalumno{
+        position: absolute;
+        right: 0px;
+    }
+    
+    h1{
+        clear: both;
+        font-size: 14px;
+        font-weight: bold;
+        text-align: center;
+    }
+    
+    fieldset{
+        margin-top: 10px;
+        font-size: 11px;
+        color: #000;
+        border: 1px solid #000;
+    }
+    
+    fieldset legend{
+        font-weight: bold;
+        
+    }
+    
+    fieldset table{
+        width: 100%;
+    }
+    
+    td.label{
+        font-weight: bold;
+        text-align: left;
+		color:#000000;
+    }
+    
+    td.contenido{
+        text-align: left;
+        border: 1px solid #000;
+		padding-left: 8px;
+		
+    }
+    
+    td.contenido2{
+        text-align: left;
+		 border: 1px solid #000;
+    }
+    
+
+
